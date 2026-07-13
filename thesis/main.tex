@@ -156,11 +156,11 @@ For a genome that must control both, the assumption that one nonlinearity covers
 However, available literature does not answer it.
 NEAT has been studied extensively in single-task settings, and there is related work on co-evolution, modular networks, and transfer between related tasks.
 The case we care about is missing. One genome evolved for solving two environments whose input and output spaces have different sizes, with no per-task heads and no fine-tuning.
-Within neuroevolution, even the basic step of passing observations of different sizes through one network is rarely treated directly. 
+Within neuroevolution, even the basic step of passing observations of different sizes through one network is rarely treated directly in the literature we surveyed.
 Whether activation heterogeneity helps such a shared genome generalise has, to our knowledge, not been tested empirically.
 
 Fitness aggregation, a strategy of combing two fitness values of different tasks or objectives into one scalar, is needed to evaluate the network. 
-A common approach is to use NSGA II a method that evaluates solutions using the Pareto front \parentcite{deb_fast_2002}.
+A common approach is to use NSGA II a method that evaluates solutions using the Pareto front \parencite{deb_fast_2002}.
 In contrast we compared three such aggregators as fitness functions:  normalised minimum (maximin), a normalised sum, and a normalised product.
 
 % Fitness aggregation, the combination of two task returns into a single selection pressure, is well studied in multi-objective evolutionary computation (\cite{deb_fast_2002}). 
@@ -865,8 +865,8 @@ For Walker2D, all inputs and outputs are used directly without modification.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.85\textwidth]{Figures/Network_new.png}
-    \caption{The shared network interface for the multi-task setup. The same evolved network serves both tasks. Hopper, inputs 11--16 receive zero padding and outputs 3--5 are unused. Walker2D uses all 17 inputs and all 6 outputs natively.}
+    \includegraphics[width=0.85\textwidth]{Figures/Network_newv2.png}
+    \caption{The shared network interface for the multi-task setup. The same evolved network serves both tasks. For Hopper, inputs 12--17 receive zero padding and outputs 4--6 are unused. Walker2D uses all 17 inputs and all 6 outputs natively.}
     \label{fig:network-architecture}
 \end{figure}
 
@@ -912,6 +912,7 @@ The distance between two genomes is
 
 where $D$ denotes the count of non-homologous genes, $H$ denotes the set of homologous gene pairs, $\delta_i$ is the attribute distance for pair $i$, $c_d$ and $c_w$ weight the two terms (values in Table~\ref{tab:hyperparameters}), and $n_1$, $n_2$ are the gene counts of each genome.
 This form follows the TensorNEAT (\cite{wang_tensorized_2024}) implementation and merges the separate disjoint and excess terms of the original NEAT formulation into the single count $D$.
+It also divides both terms by $\max(n_1, n_2)$, whereas the original formulation averages attribute differences over homologous pairs only. Attribute differences therefore contribute less to the distance in large genomes than under the original definition.
 Genomes whose distance falls below the compatibility threshold $\theta$ (Table~\ref{tab:hyperparameters}) are assigned to the same species.
 
 Within each species, the top fraction of genomes, set by the survival threshold (Table~\ref{tab:hyperparameters}), produces offspring through crossover and mutation.
@@ -1088,7 +1089,7 @@ This scale asymmetry motivates the per-task normalisation constants (3000 for Ho
 The experiment compares three conditions, all operating within the multi-task Hopper + Walker2D setting:
 
 \begin{enumerate}
-    \item \textbf{Multi-Task NEAT (baseline).} Standard NEAT with homogeneous $\tanh$ activation functions on all hidden nodes. This condition uses \texttt{DefaultConn} without historical markers. The standard per-node activation mutation mechanism is active but has no practical effect, since only one activation option is available.
+    \item \textbf{Multi-Task NEAT (baseline).} Standard NEAT with homogeneous $\tanh$ activation functions on all hidden nodes. This condition uses \texttt{DefaultConn}, which carries no historical markers. Gene identity is instead given by the (source, destination) index pair, so crossover and distance align connection genes by structure rather than by marker. Absent marker reassignment the two identity schemes coincide, since a connection's endpoints never change after creation. The standard per-node activation mutation mechanism is active but has no practical effect, since only one activation option is available.
 
     \item \textbf{Multi-Task HA-NEAT (treatment).} HA-NEAT with heterogeneous activations drawn from the palette $\mathcal{A}$. This condition uses \texttt{OriginConn} with historical markers. Activation mutation occurs at most once per genome per generation, with speciation protection via marker reassignment as described in Section~\ref{subsubsec:ha-neat-extensions}.
 
@@ -1191,7 +1192,7 @@ The main-study runs at population 200 decelerate even earlier than the calibrati
 \label{subsec:evaluation-protocol}
 
 Each experimental condition was repeated across 30 independent runs; all three conditions used the same 30 random seeds.
-The seed list, the full run configuration, and the analysis code are available at [repository URL].
+The seed list, the full run configuration, and the analysis code are available at \url{https://github.com/SvenGoerdes/tensorneat}.
 At $\alpha = 0.05$ and 80\% power, this sample size can detect effects of roughly Cohen's $d \geq 0.74$ with non-parametric tests, while remaining computationally tractable given the cost of population-based neuroevolution on GPU hardware.
 
 Performance is measured at three levels:
@@ -1404,7 +1405,7 @@ HA-NEAT vs.\ ablation & $+0.006$ $[-0.051, +0.063]$ & $+0.04$ $[-0.26, +0.34]$ \
 The design bounds how large an undetected effect could be.
 With $n = 30$ per group, the smallest difference detectable at $\alpha = 0.05$ (two-sided) with power 0.80, adjusted for the asymptotic relative efficiency of the Mann--Whitney test, is Cohen's $d \approx 0.74$, about 0.06 normalised-fitness units or roughly 30\% of the observed performance level.
 We can therefore rule out large differences between conditions; smaller ones could have gone undetected.
-Two one-sided tests (Welch TOST) sharpen this: at an equivalence bound of $\pm 0.8$ pooled SD ($\pm 0.067$) all three contrasts are statistically equivalent ($p = 0.034$, $0.020$, $0.002$), whereas at the tighter $\pm 0.5$ SD bound ($\pm 0.042$) only HA-NEAT versus the ablation is equivalent ($p = 0.040$), with NEAT versus HA-NEAT ($p = 0.234$) and NEAT versus the ablation ($p = 0.176$) inconclusive.
+Two one-sided tests (Welch TOST) sharpen this, although the procedure is parametric and therefore serves only as a supplementary check alongside the rank-based analyses: at an equivalence bound of $\pm 0.8$ pooled SD ($\pm 0.067$) all three contrasts are statistically equivalent ($p = 0.034$, $0.020$, $0.002$), whereas at the tighter $\pm 0.5$ SD bound ($\pm 0.042$) only HA-NEAT versus the ablation is equivalent ($p = 0.040$), with NEAT versus HA-NEAT ($p = 0.234$) and NEAT versus the ablation ($p = 0.176$) inconclusive.
 The study therefore rules out large ($\geq 0.8$ SD) differences everywhere, and medium differences only between HA-NEAT and its ablation; the confidence intervals and the minimum detectable effect are the primary evidence for the null, with the TOST results supporting equivalence only at the large-effect bound.
 
 The endpoint null extends across the whole training run (Figure~\ref{fig:main-training-curves}).
@@ -1497,7 +1498,7 @@ Episodes that share a genome are not independent observations, so all statistics
 
 Champions in all three conditions clustered in a narrow vertical band at normalised Hopper $\approx 0.33$--$0.35$, while Walker2D spread across a wider range and set the minimum for the large majority of genomes (Figure~\ref{fig:main-tradeoff}).
 Walker2D was the binding task for 97\% of NEAT champions, 83\% of HA-NEAT, and 90\% of the ablation.
-The per-genome imbalance $|r_{\text{hopper}} - r_{\text{walker2d}}|$ did not differ across conditions (medians 0.159 / 0.117 / 0.142; Kruskal--Wallis $H = 3.39$, $p = 0.184$, $n = 30$ per condition).
+The per-genome imbalance $|r_{\text{hopper}}/3000 - r_{\text{walker2d}}/5000|$ did not differ across conditions (medians 0.159 / 0.117 / 0.142; Kruskal--Wallis $H = 3.39$, $p = 0.184$, $n = 30$ per condition).
 The Hopper band sits at $0.34 \times 3000 \approx 1000$ raw reward, which for this environment corresponds to roughly 1000 timesteps of the per-step healthy/alive bonus \cite{freeman_brax_2021}.
 A return in this band is consistent with a policy that survives the episode while making little forward progress, so the champions may effectively hop in place on Hopper; we did not render episodes to verify this.
 Across every condition, then, champions solved the multi-task problem with the same lopsided profile: a saturated Hopper score and a Walker2D score that carried the aggregate.
@@ -1520,9 +1521,9 @@ for 83--97\% of champions. Per-genome imbalance does not differ across condition
 If activation diversity is the ingredient that HA-NEAT contributes, its champions should both use the non-tanh activations and be rewarded for doing so; we examined the activation composition of HA-NEAT's hidden nodes and its relationship to fitness.
 Of the 30 HA-NEAT champions, 17 evolved at least one hidden node; the remaining 13 had none, leaving 55 hidden nodes across the informative seeds.
 
-The evolved activations were diverse and rarely defaulted to tanh (Figure~\ref{fig:main-activation-dist}).
-Among the 55 hidden nodes, relu accounted for 27\%, sigmoid 24\%, identity 22\%, sin 16\%, and tanh 11\%.
-Neither summary of diversity predicted fitness across the 17 informative champions (Figure~\ref{fig:main-activation-fit}): activation entropy showed no monotonic relationship with fitness (Spearman $\rho = -0.05$, $p = 0.84$), nor did the fraction of non-tanh hidden nodes ($\rho = 0.27$, $p = 0.30$).
+The evolved activations were diverse and rarely defaulted to $\tanh$ (Figure~\ref{fig:main-activation-dist}).
+Among the 55 hidden nodes, ReLU accounted for 27\%, sigmoid for 24\%, identity for 22\%, $\sin$ for 16\%, and $\tanh$ for 11\%.
+Neither summary of diversity predicted fitness across the 17 informative champions (Figure~\ref{fig:main-activation-fit}): activation entropy showed no monotonic relationship with fitness (Spearman $\rho = -0.05$, $p = 0.84$), nor did the fraction of non-$\tanh$ hidden nodes ($\rho = 0.27$, $p = 0.30$).
 With only 17 informative genomes these correlation tests are underpowered.
 We therefore read the flat correlations as an absence of evidence, not as evidence that diversity is irrelevant.
 
