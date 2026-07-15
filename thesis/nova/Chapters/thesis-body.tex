@@ -255,7 +255,7 @@ This sidesteps the competing-conventions problem without any topological analysi
 \begin{figure}[htb]
 \centering
 \includegraphics[width=0.9\textwidth]{Figures/genotype_phenotype.png}
-\caption[Genotype--phenotype correspondence in NEAT]{Genotype--phenotype correspondence in NEAT, from \textcite{stanley_evolving_2002}. The genome lists node genes and connection genes. Each connection gene records its input and output node, a weight, an enabled flag, and an innovation number. The network below is the phenotype the genome decodes to. It has three input nodes, one hidden node, and one output node. The second connection gene is disabled, so its connection (from node 2 to node 4) is absent from the network.}
+\caption[Genotype--phenotype correspondence in NEAT]{Genotype--phenotype correspondence in NEAT, from \textcite{stanley_evolving_2002}. The genome lists node genes and connection genes; the network below is the phenotype it decodes to. The disabled second connection gene (node 2 to node 4) is absent from the network.}
 \label{fig:genotype-phenotype}
 \end{figure}
 
@@ -632,7 +632,7 @@ For Walker2D, all inputs and outputs are used directly without modification.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.85\textwidth]{Figures/Network_newv2.png}
-    \caption{The shared network interface for the multi-task setup. The same evolved network serves both tasks. For Hopper, inputs 12--17 receive zero padding and outputs 4--6 are unused. Walker2D uses all 17 inputs and all 6 outputs natively.}
+    \caption{The shared network interface for the multi-task setup. For Hopper, inputs 12--17 are zero-padded and outputs 4--6 are unused; Walker2D uses all 17 inputs and 6 outputs natively.}
     \label{fig:network-architecture}
 \end{figure}
 
@@ -885,7 +885,7 @@ The values are taken from the run parameters logged in MLflow and are identical 
 
 \begin{table}[h]
 \centering
-\caption{\revFig{F-06b}{Evolutionary hyperparameters, identical across all three conditions except for the HA-NEAT-specific block, which applies only to HA-NEAT and its ablation.}}
+\caption{\revFig{F-06b}{Evolutionary hyperparameters. The HA-NEAT-specific block applies only to HA-NEAT and its ablation; all other values are shared across the three conditions.}}
 \label{tab:hyperparameters}
 \begin{tabular}{ll}
 \toprule
@@ -946,14 +946,14 @@ The main-study runs at population 200 decelerate even earlier than the calibrati
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/aggregation_calibration.png}
-    \caption{Aggregation calibration experiment (twelve champions per aggregation, single-seed grid). (a) Mean normalised score of each genome's stronger and weaker task under sum, minimum, and product aggregation. The minimum yields the smallest stronger--weaker gap and the highest weaker-task score. (b) Per-task profile of each champion. The dashed diagonal marks balanced performance. Sum and product permit strongly unbalanced genomes, including one sum-aggregation genome with a normalised Hopper score of 1.04 and a Walker2D score of 0.17.}
+    \caption{Aggregation calibration experiment (twelve champions per aggregation, single-seed grid). (a) Mean normalised score of each genome's stronger and weaker task under sum, minimum, and product aggregation. (b) Per-task profile of each champion; the dashed diagonal marks balanced performance.}
     \label{fig:aggregation-calibration}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/budget_calibration.png}
-    \caption{Training-budget calibration. (a) Best-so-far normalised-minimum fitness against generation for the calibration runs (population 4096, up to 2000 generations). The dashed vertical line marks generation 750. (b) The same curves for the main study (population 200, 750 generations). Improvement rates fall four- to five-fold after generation 700 in every condition, and the smaller main-study populations decelerate earlier than the calibration runs, supporting the 750-generation budget.}
+    \caption{Training-budget calibration. (a) Best-so-far normalised-minimum fitness against generation for the calibration runs (population 4096, up to 2000 generations); the dashed vertical line marks generation 750. (b) The same curves for the main study (population 200, 750 generations).}
     \label{fig:budget-calibration}
 \end{figure}
 
@@ -1036,7 +1036,7 @@ For readers calibrated to Brax's raw reward scale: because Walker2D sets the min
 
 \begin{table}[h]
 \centering
-\caption{Best-found normalised-minimum fitness per condition ($n = 30$ each), from champions re-evaluated over 20 episodes per task. Pairwise rows report the Hodges--Lehmann median-difference estimate with a bootstrap 95\% confidence interval and Cliff's $\delta$ with its 95\% interval. No contrast is significant.}
+\caption{Best-found normalised-minimum fitness per condition ($n = 30$ each), from champions re-evaluated over 20 episodes per task. Pairwise rows report the Hodges--Lehmann median-difference estimate (bootstrap 95\% CI) and Cliff's $\delta$ (95\% CI).}
 \label{tab:main-fitness}
 \begin{tabular}{lcc}
 \toprule
@@ -1070,7 +1070,7 @@ These training values exceed the re-evaluated scores of Table~\ref{tab:main-fitn
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\textwidth]{Figures/fitness_over_generations.png}
-\caption{Learning dynamics in the main study. Lines are across-seed means ($n=30$ per condition) of the per-generation best normalised-minimum fitness. Shaded bands are 95\% confidence intervals of the mean. The three conditions follow the same trajectory over all 750 generations, and their means never separate by more than 0.03 normalised units.}
+\caption{Learning dynamics in the main study. Lines are across-seed means ($n=30$ per condition) of the per-generation best normalised-minimum fitness; shaded bands are 95\% confidence intervals of the mean.}
 \label{fig:main-training-curves}
 \revFig{F-03a}{}% \FloatBarrier moved out of the float, to after \end{figure} (see report F-03)
 \end{figure}
@@ -1117,9 +1117,7 @@ The conditions therefore converged to equal fitness while ending at different to
 \caption{Active connections per champion.}
 \label{fig:main-conns}
 \end{subfigure}
-\caption{Final-champion complexity in the main study ($n=30$ per condition). (a) Hidden-node
-distributions differ across conditions (Kruskal--Wallis $p = 0.024$), driven by the NEAT vs.\
-ablation contrast. (b) Connection counts do not ($p = 0.244$).}
+\caption{Final-champion complexity in the main study ($n=30$ per condition). (a) Hidden-node counts per champion. (b) Active connection counts per champion.}
 \revFig{F-02a}{}\label{fig:main-complexity}% group-level \label added (was absent -- see report F-02)
 \end{figure}
 
@@ -1137,10 +1135,7 @@ ablation contrast. (b) Connection counts do not ($p = 0.244$).}
 \caption{Species count over generations.}
 \label{fig:main-species}
 \end{subfigure}
-\caption{Generational dynamics in the main study. Lines are across-seed means. Bands are the
-inter-quartile range. (a) Node counts diverge only after $\approx$ generation 300 and connection
-counts prune in lockstep. (b) Species counts saturate near the configured ceiling in all
-conditions.}
+\caption{Generational dynamics in the main study. Lines are across-seed means; bands are the inter-quartile range. (a) Best-genome node and connection counts over generations. (b) Species count over generations.}
 \revFig{F-02b}{}\label{fig:main-dynamics}% group-level \label added (was absent -- see report F-02)
 \revFig{F-03b}{}% \FloatBarrier moved out of the float, to after \end{figure} (see report F-03)
 \end{figure}
@@ -1164,11 +1159,7 @@ Across every condition, then, champions solved the multi-task problem with the s
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{Figures/tradeoff_frontier.png}
-\caption{Per-task trade-off frontier in the main study ($n=30$ per condition). Each point is a
-champion's normalised Hopper score (x) against its normalised Walker2D score (y). Champions cluster
-in a vertical band at Hopper $\approx 0.33$--$0.35$ in all conditions. Walker2D is the binding task
-for 83--97\% of champions. Per-genome imbalance does not differ across conditions
-(Kruskal--Wallis $p = 0.184$).}
+\caption{Per-task trade-off frontier in the main study ($n=30$ per condition). Each point is a champion's normalised Hopper score (x) against its normalised Walker2D score (y).}
 \label{fig:main-tradeoff}
 \end{figure}
 \FloatBarrier
@@ -1199,9 +1190,7 @@ We therefore read the flat correlations as an absence of evidence, not as eviden
 \caption{Activation entropy vs.\ fitness ($n=17$).}
 \label{fig:main-activation-fit}
 \end{subfigure}
-\caption{Activation usage within HA-NEAT champions in the main study. (a) Diversity is genuinely
-exploited (tanh is the least common activation at 11\%), but (b) neither entropy nor non-tanh
-fraction predicts fitness across the 17 champions with hidden nodes.}
+\caption{Activation usage within HA-NEAT champions in the main study. (a) Activation composition of the 55 hidden nodes. (b) Activation entropy against fitness across the 17 champions with hidden nodes.}
 \revFig{F-02c}{}\label{fig:main-activation-usage}% group-level \label added (was absent -- see report F-02)
 \revFig{F-03c}{}% \FloatBarrier moved out of the float, to after \end{figure} (see report F-03)
 \end{figure}
