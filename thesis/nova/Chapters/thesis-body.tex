@@ -250,18 +250,12 @@ Two genes that share an innovation number encode the same structural feature, ev
 Crossover therefore aligns parents through their shared innovation numbers.
 Matching genes are inherited from either parent at random, while disjoint and excess genes are taken from the fitter parent.
 This sidesteps the competing-conventions problem without any topological analysis.
-\revFig{F-01}{Figure~\ref{fig:genotype-phenotype} sketches the genotype--phenotype correspondence} and the structural mutation operator that the innovation numbering tracks.
+\revFig{F-01}{Figure~\ref{fig:genotype-phenotype} shows the genotype--phenotype correspondence}: the genome lists node genes and connection genes, and each connection gene carries the innovation number that crossover aligns on.
 
-% TODO: replace the tikz placeholder box below with the final figure:
-%   \includegraphics[width=0.85\textwidth]{Figures/genotype_phenotype.png}
-\begin{figure}[h]
+\begin{figure}[htb]
 \centering
-\begin{tikzpicture}
-  \draw[dashed] (0,0) rectangle (0.85\textwidth,4cm);
-  \node[align=center] at (0.425\textwidth,2cm)
-    {\itshape Placeholder: genotype--phenotype figure\\(\texttt{Figures/genotype\_phenotype.png})};
-\end{tikzpicture}
-\caption{Genotype--phenotype correspondence in NEAT and the structural mutation operator. A node-addition mutation splits an existing connection: the original connection is disabled and two new connections inherit innovation numbers from a global counter.}
+\includegraphics[width=0.9\textwidth]{Figures/genotype_phenotype.png}
+\caption[Genotype--phenotype correspondence in NEAT]{Genotype--phenotype correspondence in NEAT, from \textcite{stanley_evolving_2002}. The genome lists node genes and connection genes. Each connection gene records its input and output node, a weight, an enabled flag, and an innovation number. The network below is the phenotype the genome decodes to. It has three input nodes, one hidden node, and one output node. The second connection gene is disabled, so its connection (from node 2 to node 4) is absent from the network.}
 \label{fig:genotype-phenotype}
 \end{figure}
 
