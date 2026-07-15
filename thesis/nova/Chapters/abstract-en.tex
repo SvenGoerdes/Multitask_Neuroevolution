@@ -1,0 +1,23 @@
+%!TEX root = ../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% abstract-en.tex
+%% NOVA thesis document file
+%%
+%% Abstract in English
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE abstract-en.tex}%
+
+Standard NEAT holds one activation function fixed across every node. Heterogeneous Activation NEAT (HA-NEAT) makes that function an evolvable per-neuron property. Its reported advantages, however, come only from static classification and regression benchmarks. This thesis asks whether they transfer to multi-task continuous control. There, a single shared genome must drive two Brax locomotion bodies whose observation and action spaces differ in size: Hopper (11 observations, 3 actions) and Walker2D (17 observations, 6 actions). We build one network over the union of both interfaces, with 17 input and 6 output nodes. We then fit each environment to that network by zero-padding Hopper's observation and slicing its actions from the first three outputs, so that no part of the architecture is reserved for either task. Selection uses the normalised minimum of the two returns, which ties a genome's fitness to its weaker task. We compare three conditions: standard NEAT, HA-NEAT, and a tanh-only HA-NEAT ablation that keeps the full mutation mechanism but has no activation diversity. Each ran at population 200 over 750 generations across 30 seeds, for 90 runs in total on the JAX, Brax, and TensorNEAT stack, and we re-evaluated every champion over 20 held-out episodes per task.
+
+Our main result is a null result. Median fitness was 0.184 (NEAT), 0.208 (HA-NEAT), and 0.199 (ablation), with no difference across conditions (Kruskal--Wallis $H = 1.48$, $p = 0.476$). The design rules out only effects of Cohen's $d \geq 0.74$, so smaller differences could have gone undetected. HA-NEAT champions drew on the \revTerm{T-01}{full activation set}, and $\tanh$ was their \emph{least} common hidden activation at 11\%. We found one structural signal: the ablation's champions are more compact than NEAT's ($p = 0.030$). That effect appears in the condition with no activation diversity at all, which points to the historical markers that HA-NEAT reassigns after an activation change as the likely cause, and away from heterogeneity. One caveat limits these conclusions. Walker2D binds the minimum for 83--97\% of champions while Hopper saturates near 0.34 normalised, so the objective degenerated toward single-task Walker2D optimisation and applied less multi-task pressure than the design intended.
+
+\keywords{
+  Neuroevolution \and
+  NEAT \and
+  HA-NEAT \and
+  Heterogeneous Activation Functions \and
+  Multi-Task Reinforcement Learning \and
+  Continuous Control \and
+  JAX / Brax
+}

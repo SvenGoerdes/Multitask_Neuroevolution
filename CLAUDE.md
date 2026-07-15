@@ -102,6 +102,8 @@ thesis/                      # Master thesis LaTeX source (subtree-merged from t
   main.tex                   #   github.com/SvenGoerdes/master-thesis repo — canonical thesis text)
   master_thesis.bib          # Bibliography
   Figures/                   # Thesis figures
+  nova/                      # Thesis in the official NOVA-IMS template (see "NOVA-IMS thesis build")
+    template.tex             #   entry point (do NOT edit); Config/*.tex + Chapters/thesis-body.tex hold our content
 text/                        # Older Markdown drafts (superseded by thesis/main.tex)
   results_and_discussion.md  # Thesis Results & Discussion draft (Markdown, legacy)
   figures/                   # Plotting + stats scripts
@@ -114,4 +116,22 @@ src/tensorneat/              # Library source
 docs/FEATURE_LOG.md          # Running log of all implemented features
 REFERENCE.md                 # Detailed implementation notes
 ```
+
+## NOVA-IMS thesis build
+
+`thesis/nova/` holds the thesis wrapped in the **official NOVA-IMS 2025 template** (memoir-based `novathesis` class), configured for the MDSAA / Data Science programme. It is the submission-formatted build; `thesis/main.tex` remains the canonical working text.
+
+- **Entry point:** `thesis/nova/template.tex` — do NOT edit. All customisation lives in `Config/*.tex`.
+- **Our content (the only committed files under `nova/`):**
+  - `Config/1_novathesis.tex` — doctype=msc, school=nova/ims, mdsaa/ds, `docstatus=working`, English-only abstract.
+  - `Config/2_biblatex.tex` — APA + biber.
+  - `Config/3_cover.tex` — cover metadata. **Contains TODO placeholders** for adviser, previous degree, submission/exam date, committee.
+  - `Config/4_files.tex` — wires in `Chapters/thesis-body.tex` + both `.bib` files.
+  - `Config/5_packages.tex` — thesis packages (tikz-cd, multicol, placeins, subcaption); `\fb`/`\rev*` review macros neutralised to plain text.
+  - `Chapters/thesis-body.tex` — **the whole thesis body**, migrated from `main_feedback_sven.tex`. Prose byte-identical; headings promoted one level (`\section`→`\chapter`, etc.).
+  - `Chapters/abstract-en.tex` — English abstract + keywords.
+- **Not committed (gitignored via `nova/.gitignore`):** the 47 MB vendored template core (`novathesis.cls`, cover PDFs, fonts, `NOVAthesisFiles/`, template `Chapters/`/`Bibliography/`) and all build artifacts. Restore the core by re-copying from `../nova-ims-thesis-template-2025-main` (kept outside the repo, untouched).
+- **Figures:** `nova/Figures` is a symlink to `../Figures`; body references `Figures/*.png` resolve via `\graphicspath`.
+- **Build:** `cd thesis/nova && latexmk -xelatex -shell-escape template.tex`. XeLaTeX is required for the real Arial body font; pdfLaTeX falls back to lmodern. Compiles clean (49 pp, 0 undefined refs/citations).
+- **Before final submission:** fill the `3_cover.tex` TODOs and switch `docstatus=working` → `provisional`/`final` in `1_novathesis.tex` (final also prints dedicatory, acknowledgements, and committee).
 

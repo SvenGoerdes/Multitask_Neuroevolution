@@ -1,0 +1,37 @@
+%!TEX root = ../template.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Config/4_files.tex
+%% NOVA thesis configuration file
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\typeout{NT FILE Config/4_files.tex}%
+
+%=============================================================================
+% THE FILES
+%=============================================================================
+
+%%------------------------------------------------------------
+% BibTeX bibliography files (resolved from the "Bibliography" folder).
+\ntaddfile{bib}{master_thesis.bib}
+\ntaddfile{bib}{additional_pap.bib}
+
+%%------------------------------------------------------------
+% Front-matter text files. In "docstatus=working" the dedicatory, acknowledgements
+% and quote are silently ignored; they are wired here for later "final" builds.
+% \ntaddfile{dedicatory}{dedicatory}
+\ntaddfile{acknowledgements}{acknowledgements}
+% \ntaddfile{quote}{quote}
+
+%%------------------------------------------------------------
+% Abstract files. English only (NOVA IMS does not require a Portuguese abstract here).
+\ntaddfile{abstract}[en]{abstract-en}  % Abstract in English
+
+%%------------------------------------------------------------
+% Lists of Glossary, Acronyms and Symbols — not used in this thesis.
+% \ntaddfile{glossaries}[glossary]{glossary}
+% \ntaddfile{glossaries}[acronym]{acronyms}
+% \ntaddfile{glossaries}[symbols]{symbols}
+
+%%------------------------------------------------------------
+% Main text — the migrated thesis body (single file; all chapters inside).
+\ntaddfile{chapter}{thesis-body}

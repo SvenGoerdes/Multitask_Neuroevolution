@@ -1,0 +1,49 @@
+# NOVA-IMS template migration — track ONLY the files we authored/edited.
+# The vendored template core (novathesis.cls, cover PDFs, fonts, NOVAthesisFiles/,
+# template Chapters/, template Bibliography/) is intentionally NOT committed here:
+# it is a 47 MB / ~500-file upstream drop, restorable from
+# ../../../nova-ims-thesis-template-2025-main. See CLAUDE.md > "NOVA-IMS thesis build".
+
+# Ignore everything by default...
+*
+
+# ...then re-include only our own files and the dirs needed to reach them.
+!.gitignore
+!Config/
+Config/*
+!Config/1_novathesis.tex
+!Config/2_biblatex.tex
+!Config/3_cover.tex
+!Config/4_files.tex
+!Config/5_packages.tex
+!Chapters/
+Chapters/*
+!Chapters/abstract-en.tex
+!Chapters/acknowledgements.tex
+!Chapters/thesis-body.tex
+!template.tex
+
+# Build artifacts (belt-and-suspenders; the "*" above already covers these).
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
+*.pdf
+*.gls
+*.glo
+*.glg
+*.acn
+*.acr
+*.alg
+*.ist
+*.slg
+*.slo
+*.sls
