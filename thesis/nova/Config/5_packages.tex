@@ -82,18 +82,12 @@
 %       {€}{{\EUR}}1 {£}{{\pounds}}1
 % }
 % ================== NOVA IMS — Corpo do texto ==================
-\usepackage{iftex}
-\ifPDFTeX
-  % Fallback (compila, mas NÃO é Arial):
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{lmodern}
-\else
-  % Preferido: XeLaTeX ou LuaLaTeX -> Arial real
-  \usepackage{fontspec}
-  \setmainfont{Arial}
-  \setsansfont{Arial}
-\fi
+% The body text uses the NOVAthesis default font (style/font=newpx, a
+% Palatino-like serif rendered as TeXGyrePagella). This matches the official
+% IMS look and the reference theses (cover stays in Borna, body in Palatino).
+% We deliberately do NOT override \setmainfont here — the class loads its own
+% font after this file, and letting it win keeps the Palatino body default.
+% (An earlier Arial override was removed on request.)
 
 % ===== Espaçamento 1,15 sem depender do setspace =====
 \makeatletter
@@ -109,8 +103,8 @@
 \renewcommand{\printchaptertitle}[1]{%
   \par\noindent{\fontsize{16pt}{18pt}\selectfont\bfseries #1}%
 }
-\setlength{\beforechapskip}{1.5\baselineskip}
-\setlength{\afterchapskip}{1.0\baselineskip}
+\setlength{\beforechapskip}{2.5\baselineskip}
+\setlength{\afterchapskip}{1.5\baselineskip}
 
 % --- Seções do corpo ---
 \newcommand{\IMSSectionStyle}{\fontsize{16pt}{18pt}\bfseries}         % \section
@@ -124,12 +118,16 @@
 \setparaheadstyle{\IMSParagraphStyle}
 
 % Espaços verticais entre títulos e texto
-\setbeforesecskip{-1.0ex}
-\setaftersecskip{1.0ex}
-\setbeforesubsecskip{-0.8ex}
-\setaftersubsecskip{0.8ex}
-\setbeforesubsubsecskip{-0.6ex}
-\setaftersubsubsecskip{0.6ex}
+% More vertical air ABOVE each heading (the negative before-skips were
+% crushing the space before sections/subsections). Positive before-skips
+% give a clear gap; the sign no longer suppresses first-paragraph indent,
+% which is acceptable here.
+\setbeforesecskip{3.0ex plus 1ex minus 0.5ex}
+\setaftersecskip{1.2ex}
+\setbeforesubsecskip{2.4ex plus 1ex minus 0.5ex}
+\setaftersubsecskip{1.0ex}
+\setbeforesubsubsecskip{2.0ex plus 0.8ex minus 0.4ex}
+\setaftersubsubsecskip{0.8ex}
 % ================================================================
 
 % ================== NOVA IMS — Front-matter ==================
@@ -153,6 +151,33 @@
 % \AtBeginDocument{\normalfont\fontsize{12pt}{14pt}\selectfont}
 % ================================================================
 
+
+% ================================================================
+% NOVA IMS — COVER OVERRIDES
+%   The official IMS cover is drawn by the (vendored, gitignored) school
+%   defaults file. We keep that file untouched and override its ingredients
+%   here, after it has loaded, via \AtEndPreamble.
+%
+%   Changes requested:
+%     1. Cover text black instead of grey  -> redefine imsdarkgrey to black.
+%     2. Drop the "by" line above the author -> blank the \by string.
+%     3. Author name: left-aligned + bold (see the reset/rebuild below).
+%     4. Fix the degree line (the template's \dissertationstringii(en) calls
+%        \themajorfield with two args but the field is never defined, so it
+%        renders blank). We override the whole string with the correct
+%        Master's-degree wording, including the specialization.
+% ================================================================
+\AtEndPreamble{%
+  % (1) Cover text colour: grey -> black.
+  \definecolor{imsdarkgrey}{RGB}{0,0,0}%
+  % (2) Remove the "by" / "por" line on the cover.
+  \by(en):={}%
+  \by(pt):={}%
+  % (4) Correct degree line on the title page (page 2). Spell the degree out
+  %     so it no longer depends on the broken \majorfield lookup.
+  \dissertationstringii(en):={Dissertation presented as partial requirement for obtaining the Master's degree in Data Science and Advanced Analytics}%
+  \dissertationstringii(specialization,en):={, with a specialization in Data Science}%
+}
 
 % ================================================================
 % THESIS-SPECIFIC PACKAGES (migrated from main_feedback_sven.tex)
