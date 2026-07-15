@@ -96,6 +96,15 @@
 }
 \makeatother
 
+% ===== Reduce overfull lines =====
+% A few paragraphs contain long unbreakable units (e.g. the activation-set
+% expression {tanh, sigma, ReLU, sin, identity} and some inline math) that
+% push past the right margin. \emergencystretch lets TeX add a little extra
+% inter-word stretch on otherwise unbreakable lines, absorbing these overfull
+% boxes without changing any wording. This is a global typesetting relaxation,
+% not a per-line hack.
+\setlength{\emergencystretch}{3em}
+
 % ================== NOVA IMS — Tamanhos dos títulos ==================
 % Funciona com memoir (base do NOVAthesis). Sem "@" nos nomes (mais robusto).
 
@@ -177,6 +186,13 @@
   %     (The heading itself is suppressed by the \NTRunHook override below,
   %     which lives at top level to avoid \AtEndPreamble parameter doubling.)
   \ntsetup{sdg={}}%
+  % (5) Colophon strings without the template self-citation. The class strings
+  %     end with "...template (v\novathesisversion)~\@ntcite{novathesis-manual}",
+  %     and neutralising \@ntcite (below) would leave a stray space before the
+  %     period ("(v7.2.1) ."). We override both colophon strings with clean
+  %     versions that drop the citation and the extra space. This also keeps
+  %     novathesis-manual out of the bibliography.
+  \acknowledgmentsstring(en):={This document was created with the (pdf/Xe/Lua)\LaTeX\ processor and the \href{https://github.com/joaomlourenco/novathesis}{NOVAthesis} template (v\novathesisversion).}%
   % (4) Correct degree line on the title page (page 2). Spell the degree out
   %     so it no longer depends on the broken \majorfield lookup.
   \dissertationstringii(en):={Dissertation presented as partial requirement for obtaining the Master's degree in Data Science and Advanced Analytics}%
@@ -218,6 +234,40 @@
 \makeatletter
 \AtBeginDocument{\renewcommand{\@ntcite}[1]{}}
 \makeatother
+
+% ----------------------------------------------------------------
+% Flatten the PDF outline: drop the "Front Matter" and "Back Matter" grouping
+% bookmarks so their children (Cover, Front Page, Statement, Copyright,
+% Acknowledgements, Abstract, Contents, List of Figures/Tables, ...) sit at the
+% top level of the PDF bookmark panel. The class emits these group nodes as
+% \pdfbookmark[-1]{...}{bmfrontmatter} in \ntprintcovers and
+% \pdfbookmark[-1]{...}{bmbackmatter1|2} in \ntprintbackcover. With the -1
+% parents gone, the level-1 children promote to the root automatically. The
+% printed Table of Contents is untouched; only the bookmark tree changes.
+%
+% NOTE: memoir ships its own weak \patchcmd (Michael Downes 2000) that shadows
+% etoolbox's and fails to match the front-matter call, so we use xpatch's
+% \xpatchcmd, which runs on the robust l3/etoolbox engine.
+\usepackage{xpatch}
+\makeatletter
+\xpatchcmd{\ntprintcovers}%
+  {\pdfbookmark[-1]{\thebkmstring(frontmatter,\@LANG@COVER)}{bmfrontmatter}}%
+  {}{}{\ClassWarning{novathesis}{Could not drop Front Matter bookmark group}}
+\xpatchcmd{\ntprintbackcover}%
+  {\pdfbookmark[-1]{\thebkmstring(backmatter,\@LANG@COVER)}{bmbackmatter1}}%
+  {}{}{\ClassWarning{novathesis}{Could not drop Back Matter bookmark group 1}}
+\xpatchcmd{\ntprintbackcover}%
+  {\pdfbookmark[-1]{\thebkmstring(backmatter,\@LANG@COVER)}{bmbackmatter2}}%
+  {}{}{\ClassWarning{novathesis}{Could not drop Back Matter bookmark group 2}}
+% Last-page colophon: with \@ntcite neutralised, the "(v...)~\@ntcite{...}."
+% construction leaves a stray space before the period. Drop the "~\@ntcite{...}"
+% so the sentence ends cleanly at "(v\novathesisversion). (hash)".
+\xpatchcmd{\@ntfixspacing}%
+  {(v\novathesisversion)~\@ntcite{novathesis-manual}.}%
+  {(v\novathesisversion).}%
+  {}{\ClassWarning{novathesis}{Could not clean colophon spacing}}
+\makeatother
+
 
 % ================================================================
 % THESIS-SPECIFIC PACKAGES (migrated from main_feedback_sven.tex)

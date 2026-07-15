@@ -2,7 +2,6 @@
 %% thesis-body.tex — migrated content from main_feedback_sven.tex
 %% Headings promoted one level (section->chapter) for NOVAthesis (memoir).
 %% Prose is byte-identical to the source; only heading levels changed.
-	ypeout{NT FILE thesis-body.tex}%
 
 % Resolve figure paths: figures live in ../Figures relative to the nova/ project.
 \graphicspath{{../Figures/}{Figures/}}
@@ -321,7 +320,7 @@ Table~\ref{tab:activation-functions} summarises the five functions and their pro
 
 \begin{table}[h]
 \centering
-\caption{Activation functions used in this thesis and their properties.}
+\caption[Activation function properties]{Activation functions used in this thesis and their properties.}
 \label{tab:activation-functions}
 \begin{tabular}{lllll}
 \toprule
@@ -339,7 +338,7 @@ Sine      & $\sin(x)$                   & $[-1,1]$           & no  & yes \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\textwidth]{Figures/activation_functions.png}
-\caption{\revFig{F-05}{The five activation functions used in this thesis, plotted over the input range. These five constitute the activation set from which HA-NEAT draws each hidden node's activation.}}
+\caption[Activation functions]{\revFig{F-05}{The five activation functions used in this thesis, plotted over the input range. These five constitute the activation set from which HA-NEAT draws each hidden node's activation.}}
 \label{fig:activation-functions}
 \end{figure}
 % new site here 
@@ -632,7 +631,7 @@ For Walker2D, all inputs and outputs are used directly without modification.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.85\textwidth]{Figures/Network_newv2.png}
-    \caption{The shared network interface for the multi-task setup. For Hopper, inputs 12--17 are zero-padded and outputs 4--6 are unused; Walker2D uses all 17 inputs and 6 outputs natively.}
+    \caption[Shared network interface]{The shared network interface for the multi-task setup. For Hopper, inputs 12--17 are zero-padded and outputs 4--6 are unused; Walker2D uses all 17 inputs and 6 outputs natively.}
     \label{fig:network-architecture}
 \end{figure}
 
@@ -830,7 +829,7 @@ The two environments share an episode structure but differ in body and interface
 
 \begin{table}[h]
 \centering
-\caption{\revFig{F-06a}{Specifications of the two Brax evaluation environments, including the zero-padded interface dimensions the shared network presents to each task.}}
+\caption[Evaluation environments]{\revFig{F-06a}{Specifications of the two Brax evaluation environments, including the zero-padded interface dimensions the shared network presents to each task.}}
 \label{tab:env-specs}
 \begin{tabular}{lll}
 \toprule
@@ -885,7 +884,7 @@ The values are taken from the run parameters logged in MLflow and are identical 
 
 \begin{table}[h]
 \centering
-\caption{\revFig{F-06b}{Evolutionary hyperparameters. The HA-NEAT-specific block applies only to HA-NEAT and its ablation; all other values are shared across the three conditions.}}
+\caption[Hyperparameters]{\revFig{F-06b}{Evolutionary hyperparameters. The HA-NEAT-specific block applies only to HA-NEAT and its ablation; all other values are shared across the three conditions.}}
 \label{tab:hyperparameters}
 \begin{tabular}{ll}
 \toprule
@@ -946,14 +945,14 @@ The main-study runs at population 200 decelerate even earlier than the calibrati
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/aggregation_calibration.png}
-    \caption{Aggregation calibration experiment (twelve champions per aggregation, single-seed grid). (a) Mean normalised score of each genome's stronger and weaker task under sum, minimum, and product aggregation. (b) Per-task profile of each champion; the dashed diagonal marks balanced performance.}
+    \caption[Aggregation calibration]{Aggregation calibration experiment (twelve champions per aggregation, single-seed grid). (a) Mean normalised score of each genome's stronger and weaker task under sum, minimum, and product aggregation. (b) Per-task profile of each champion; the dashed diagonal marks balanced performance.}
     \label{fig:aggregation-calibration}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/budget_calibration.png}
-    \caption{Training-budget calibration. (a) Best-so-far normalised-minimum fitness against generation for the calibration runs (population 4096, up to 2000 generations); the dashed vertical line marks generation 750. (b) The same curves for the main study (population 200, 750 generations).}
+    \caption[Training-budget calibration]{Training-budget calibration. (a) Best-so-far normalised-minimum fitness against generation for the calibration runs (population 4096, up to 2000 generations); the dashed vertical line marks generation 750. (b) The same curves for the main study (population 200, 750 generations).}
     \label{fig:budget-calibration}
 \end{figure}
 
@@ -989,7 +988,7 @@ All experiments were conducted on a single compute node with the specifications 
 
 \begin{table}[h]
 \centering
-\caption{\revFig{F-06c}{Hardware and software specification of the single compute node on which all 90 main-study runs were executed.}}
+\caption[Compute node]{\revFig{F-06c}{Hardware and software specification of the single compute node on which all 90 main-study runs were executed.}}
 \label{tab:compute-node}
 \begin{tabular}{ll}
 \toprule
@@ -1041,7 +1040,7 @@ For readers calibrated to Brax's raw reward scale: because Walker2D sets the min
 
 \begin{table}[h]
 \centering
-\caption{Best-found normalised-minimum fitness per condition ($n = 30$ each), from champions re-evaluated over 20 episodes per task. Pairwise rows report the Hodges--Lehmann median-difference estimate (bootstrap 95\% CI) and Cliff's $\delta$ (95\% CI).}
+\caption[Fitness per condition]{Best-found normalised-minimum fitness per condition ($n = 30$ each), from champions re-evaluated over 20 episodes per task. Pairwise rows report the Hodges--Lehmann median-difference estimate (bootstrap 95\% CI) and Cliff's $\delta$ (95\% CI).}
 \label{tab:main-fitness}
 \begin{tabular}{lcc}
 \toprule
@@ -1075,7 +1074,7 @@ These training values exceed the re-evaluated scores of Table~\ref{tab:main-fitn
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\textwidth]{Figures/fitness_over_generations.png}
-\caption{Learning dynamics in the main study. Lines are across-seed means ($n=30$ per condition) of the per-generation best normalised-minimum fitness; shaded bands are 95\% confidence intervals of the mean.}
+\caption[Learning dynamics]{Learning dynamics in the main study. Lines are across-seed means ($n=30$ per condition) of the per-generation best normalised-minimum fitness; shaded bands are 95\% confidence intervals of the mean.}
 \label{fig:main-training-curves}
 \revFig{F-03a}{}% \FloatBarrier moved out of the float, to after \end{figure} (see report F-03)
 \end{figure}
@@ -1122,7 +1121,7 @@ The conditions therefore converged to equal fitness while ending at different to
 \caption{Active connections per champion.}
 \label{fig:main-conns}
 \end{subfigure}
-\caption{Final-champion complexity in the main study ($n=30$ per condition). (a) Hidden-node counts per champion. (b) Active connection counts per champion.}
+\caption[Champion complexity]{Final-champion complexity in the main study ($n=30$ per condition). (a) Hidden-node counts per champion. (b) Active connection counts per champion.}
 \revFig{F-02a}{}\label{fig:main-complexity}% group-level \label added (was absent -- see report F-02)
 \end{figure}
 
@@ -1140,7 +1139,7 @@ The conditions therefore converged to equal fitness while ending at different to
 \caption{Species count over generations.}
 \label{fig:main-species}
 \end{subfigure}
-\caption{Generational dynamics in the main study. Lines are across-seed means; bands are the inter-quartile range. (a) Best-genome node and connection counts over generations. (b) Species count over generations.}
+\caption[Generational dynamics]{Generational dynamics in the main study. Lines are across-seed means; bands are the inter-quartile range. (a) Best-genome node and connection counts over generations. (b) Species count over generations.}
 \revFig{F-02b}{}\label{fig:main-dynamics}% group-level \label added (was absent -- see report F-02)
 \revFig{F-03b}{}% \FloatBarrier moved out of the float, to after \end{figure} (see report F-03)
 \end{figure}
@@ -1164,7 +1163,7 @@ Across every condition, then, champions solved the multi-task problem with the s
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{Figures/tradeoff_frontier.png}
-\caption{Per-task trade-off frontier in the main study ($n=30$ per condition). Each point is a champion's normalised Hopper score (x) against its normalised Walker2D score (y).}
+\caption[Per-task trade-off frontier]{Per-task trade-off frontier in the main study ($n=30$ per condition). Each point is a champion's normalised Hopper score (x) against its normalised Walker2D score (y).}
 \label{fig:main-tradeoff}
 \end{figure}
 \FloatBarrier
@@ -1195,7 +1194,7 @@ We therefore read the flat correlations as an absence of evidence, not as eviden
 \caption{Activation entropy vs.\ fitness ($n=17$).}
 \label{fig:main-activation-fit}
 \end{subfigure}
-\caption{Activation usage within HA-NEAT champions in the main study. (a) Activation composition of the 55 hidden nodes. (b) Activation entropy against fitness across the 17 champions with hidden nodes.}
+\caption[Activation usage]{Activation usage within HA-NEAT champions in the main study. (a) Activation composition of the 55 hidden nodes. (b) Activation entropy against fitness across the 17 champions with hidden nodes.}
 \revFig{F-02c}{}\label{fig:main-activation-usage}% group-level \label added (was absent -- see report F-02)
 \revFig{F-03c}{}% \FloatBarrier moved out of the float, to after \end{figure} (see report F-03)
 \end{figure}
