@@ -403,7 +403,7 @@ Heterogeneous Activation NEAT (HA-NEAT) makes the activation function itself an 
 
 The HA-NEAT algorithm \parencite{hagg_evolving_2017} extends the standard NEAT genome by encoding each neuron's activation function as an additional gene, so that topology, weights, and per-node activation evolve jointly.
 Its central empirical result is structural parsimony: heterogeneous networks match or exceed the accuracy of homogeneous baselines while using 50\%--70\% fewer nodes and connections \parencite{hagg_evolving_2017}.
-A mutation operator reassigns a node's activation function \revTerm{T-04}{from a set of qualitatively different forms}, such as sine, Gaussian, and ReLU.
+A mutation operator reassigns a node's activation function \revTerm{T-04}{from a set of qualitatively different forms}, which \textcite{hagg_evolving_2017} restricted to the step, ReLU, sigmoid, and Gaussian functions; periodic and negative-output functions such as sine were excluded because they require a different output range. This thesis deliberately adds the sine function to the set (Section~\ref{subsec:algorithm-design-ha-neat}).
 Swapping an activation changes how the node transforms its input, so the mutation is initially disruptive.
 HA-NEAT therefore reuses NEAT's speciation mechanism to shield the mutant until its weights co-adapt to the new nonlinearity.
 
@@ -551,6 +551,7 @@ A single evolved network must control both bodies at once using one shared set o
 The two tasks require diverse motor skills, from single-leg hopping to bipedal balance and forward propulsion.
 This setting suits the study because the two environments share a kinematic lineage while differing in observation dimensionality and action space. A single genome must therefore reuse the same circuitry across two interfaces, and specialising in either one leaves it unable to serve the other.
 While approaches such as \revAcro{A-08}{Mixture-of-World models} address this heterogeneity by explicitly engineering diverse expert modules \parencite{zhang_mixtureofworld_2026}, this thesis asks whether a heterogeneous NEAT network can reach similar functional modularity on its own, by evolving a population of neurons tailored to the two locomotion tasks.
+These neighbouring approaches are all gradient-based and rely on a fixed network with per-task or engineered modules \parencite{mclean_multitask_2025,hendawy_multitask_2024}, while the closest evolutionary work optimises only the weights of a fixed topology on a single-interface multi-objective problem \parencite{zhou_neuroevolutionary_2024}. To our knowledge, no prior work evolves a single shared genome, with growing topology and heterogeneous per-node activations, to control two bodies whose observation and action spaces differ.
 
 
 % Multi-task learning trains a single model on several related tasks at once, so that representations learned on one task can transfer to the others (\cite{zhang_survey_2021}).
@@ -670,21 +671,20 @@ The population is partitioned into species based on genetic distance.
 Two connection genes are \emph{homologous}, that is of shared ancestry, when they carry the same historical marker, meaning both descend from the same ancestral structural mutation. A gene whose marker appears in only one genome is non-homologous.
 For each pair of genomes, the distance function aligns connection genes by their identifying attributes, counts non-homologous genes, and computes attribute differences on homologous genes.
 Where the encoding carries a historical marker, the identifying attributes are that marker together with the (source, destination) index pair. Otherwise they are the index pair alone. Section~\ref{subsec:experimental-conditions} contrasts these two ways of identifying a connection gene, by marker or by index pair.
-The distance between two genomes is
+The distance is computed separately for node genes (aligned by node index) and for connection genes (aligned by their identifying attributes), each term normalised by its own gene count, and the two are then summed:
 
-\[d = \frac{D \cdot c_d + \sum_{i \in \mathcal{H}} \Delta_i \cdot c_w}{\max(n_1, n_2)}\]
+\[d = \sum_{g \in \{\text{node},\,\text{conn}\}} \frac{D_g \cdot c_d + \sum_{i \in \mathcal{H}_g} \Delta_i \cdot c_w}{\max(n_1^g, n_2^g)}\]
 
-where $D$ denotes the count of non-homologous genes, \revNota{N-02}{$\mathcal{H}$ denotes the set of homologous gene pairs}, \revNota{N-03}{$\Delta_i$ is the attribute distance for pair $i$}, \revNota{N-01}{$c_d$ and $c_w$ weight the two terms} (values in Table~\ref{tab:hyperparameters}), and $n_1$, $n_2$ are the gene counts of each genome.
-\revClarity{L-02}{The distance is computed separately for node genes (aligned by node index) and for connection genes (aligned by their identifying attributes). The two values are then summed.}
+where, for gene type $g$, $D_g$ denotes the count of non-homologous genes, \revNota{N-02}{$\mathcal{H}_g$ denotes the set of homologous gene pairs}, \revNota{N-03}{$\Delta_i$ is the attribute distance for pair $i$}, \revNota{N-01}{$c_d$ and $c_w$ weight the two terms} (values in Table~\ref{tab:hyperparameters}), and $n_1^g$, $n_2^g$ are the counts of that gene type in each genome.
 For a homologous connection pair, $\Delta_i$ is the absolute weight difference $|w_1 - w_2|$.
 For a homologous node pair it is
 
 \[\Delta_i = |b_1 - b_2| + \mathbb{1}[\text{agg}_1 \neq \text{agg}_2] + \mathbb{1}[\text{act}_1 \neq \text{act}_2],\]
 
 the absolute bias difference plus one unit for each mismatched aggregation or activation function.
-An activation mutation therefore raises the genetic distance twice over: directly, through this activation term, and indirectly, through the marker reassignment of Section~\ref{subsubsec:ha-neat-extensions}.
-This form follows the TensorNEAT \parencite{wang_tensorized_2024} implementation and merges the separate disjoint and excess terms of the original NEAT formulation into the single count $D$.
-It also divides both terms by $\max(n_1, n_2)$, whereas the original formulation averages attribute differences over homologous pairs only. \revClarity{L-05}{Under this definition, attribute differences therefore contribute less to the distance in large genomes than they do under the original one.}
+An activation mutation therefore raises the genetic distance twice over, and the two contributions are distinct because node and connection genes are aligned differently. The mutated node keeps its index, so it stays homologous to its counterpart and its mismatched activation fires the $\mathbb{1}[\text{act}_1 \neq \text{act}_2]$ term in the node distance. Its attached connections, in contrast, receive fresh historical markers (Section~\ref{subsubsec:ha-neat-extensions}) and so become non-homologous, moving into the $D_{\text{conn}}$ count. The activation term and the marker reassignment thus register on separate parts of the distance rather than double-counting one event.
+This form follows the TensorNEAT \parencite{wang_tensorized_2024} implementation and merges the separate disjoint and excess terms of the original NEAT formulation into the single count $D_g$.
+It also divides each gene type by its own $\max(n_1^g, n_2^g)$, whereas the original formulation averages attribute differences over homologous pairs only. \revClarity{L-05}{Under this definition, attribute differences therefore contribute less to the distance in large genomes than they do under the original one.}
 Genomes whose total distance falls below the compatibility threshold $\theta$ (Table~\ref{tab:hyperparameters}) are assigned to the same species.
 
 Within each species, the top fraction of genomes, set by the survival threshold (Table~\ref{tab:hyperparameters}), produces offspring through crossover and mutation.
