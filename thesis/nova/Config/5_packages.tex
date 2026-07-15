@@ -206,6 +206,19 @@
   \ifx\ntHookName\ntSDGHook\else\ntOrigRunHook{#1}\fi
 }
 
+% ----------------------------------------------------------------
+% Keep the NOVAthesis template colophon on the last page, but stop it from
+% adding "novathesis-manual" to the bibliography. The class colophon calls
+% \@ntcite{novathesis-manual}, which expands to \parencite{...} and therefore
+% registers a bib entry. \@ntcite is only ever used for this template credit,
+% so we redefine it to print nothing (dropping the "(Lourenço, 2021)" pointer)
+% without citing. The colophon sentence itself stays intact.
+% \@ntcite is defined by the class after this config file loads, so we override
+% it at \AtBeginDocument (which runs after the preamble is fully assembled).
+\makeatletter
+\AtBeginDocument{\renewcommand{\@ntcite}[1]{}}
+\makeatother
+
 % ================================================================
 % THESIS-SPECIFIC PACKAGES (migrated from main_feedback_sven.tex)
 %   Only packages the body actually needs and that memoir/NOVAthesis
