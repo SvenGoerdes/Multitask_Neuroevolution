@@ -170,13 +170,40 @@
 \AtEndPreamble{%
   % (1) Cover text colour: grey -> black.
   \definecolor{imsdarkgrey}{RGB}{0,0,0}%
-  % (2) Remove the "by" / "por" line on the cover.
-  \by(en):={}%
-  \by(pt):={}%
+  % (2) Restore the "by" / "por" line above the author (cover + title page).
+  \by(en):={by}%
+  \by(pt):={por}%
+  % (3) Empty the SDG icon list so the post-abstract loop emits no icons.
+  %     (The heading itself is suppressed by the \NTRunHook override below,
+  %     which lives at top level to avoid \AtEndPreamble parameter doubling.)
+  \ntsetup{sdg={}}%
   % (4) Correct degree line on the title page (page 2). Spell the degree out
   %     so it no longer depends on the broken \majorfield lookup.
   \dissertationstringii(en):={Dissertation presented as partial requirement for obtaining the Master's degree in Data Science and Advanced Analytics}%
   \dissertationstringii(specialization,en):={, with a specialization in Data Science}%
+}
+
+% ----------------------------------------------------------------
+% Suppress the "Sustainable Development Goals (SDG):" heading + \vfill that
+% the IMS school defaults push onto the post-abstract hook. \NTAddToHook is
+% additive (\optionlistdo over a pushed list), so the block cannot be
+% un-pushed. We instead wrap \NTRunHook so that the one hook named
+% "abstract/en/post" runs to nothing; every other hook is unaffected. The
+% companion \ntsetup{sdg={}} above already empties the icon loop. This lives
+% at top level (not inside \AtEndPreamble) so the macro parameter #1 is not
+% subject to \AtEndPreamble's parameter doubling. \NTRunHook is defined by
+% the class (novathesis.cls) well before this config file is read.
+% Thesis is English-only, so the hook name is the literal "abstract/en/post".
+\let\ntOrigRunHook\NTRunHook
+\renewcommand*{\NTRunHook}[1]{%
+  % String-compare the (fully expanded, detokenized) hook name against the
+  % post-abstract hook, robust to catcodes/spacing. Suppress only that one.
+  % At run time the abstract loop passes the hook name with its loop macro
+  % \myi still unexpanded (e.g. "abstract/\myi /post"), not "abstract/en/post".
+  % We therefore match the detokenized name against that exact literal.
+  \edef\ntHookName{\detokenize{#1}}%
+  \edef\ntSDGHook{\detokenize{abstract/\myi /post}}%
+  \ifx\ntHookName\ntSDGHook\else\ntOrigRunHook{#1}\fi
 }
 
 % ================================================================
