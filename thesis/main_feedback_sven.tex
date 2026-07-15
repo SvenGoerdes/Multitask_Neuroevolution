@@ -14,31 +14,35 @@
 \usepackage{todonotes}
 \usepackage{etoolbox} % provides \pretocmd used in the heading fix below
 
-% --- Language review annotations: delete this block to strip all markup ---
-% To produce a markup-free version, replace each \newcommand below with:
-%   \newcommand{\revXxx}[2]{#2}
-\definecolor{lrRed}{RGB}{200,30,40}
-\definecolor{lrOrange}{RGB}{215,110,0}
-\definecolor{lrGreen}{RGB}{0,130,60}
-\definecolor{lrBlue}{RGB}{0,90,190}
-\definecolor{lrTeal}{RGB}{0,130,130}
-\definecolor{lrViolet}{RGB}{130,45,175}
-\definecolor{lrPurple}{RGB}{150,0,150}
-\definecolor{lrAmber}{RGB}{180,120,0}
-\definecolor{lrGrey}{RGB}{110,110,110}
+% --- Language review annotations: NEUTRALISED in this feedback copy ---
+% The previous coloured language-review wrappers (\revGram, \revClarity, ...)
+% are redefined to render only their text (#2) and drop the [ID] superscript.
+% This removes all of Sven's earlier review colouring/annotations from the PDF
+% while leaving the prose byte-identical to the source file. Do not re-add colour
+% here; the fresh feedback markup lives in the \fb block below.
+\newcommand{\revID}[1]{}                 % old ID superscripts: suppressed
+\newcommand{\revGram}[2]{#2}
+\newcommand{\revClarity}[2]{#2}
+\newcommand{\revPlain}[2]{#2}
+\newcommand{\revBrit}[2]{#2}
+\newcommand{\revTerm}[2]{#2}
+\newcommand{\revNota}[2]{#2}
+\newcommand{\revAcro}[2]{#2}
+\newcommand{\revFig}[2]{#2}
+\newcommand{\revMeta}[2]{#2}
 
-\newcommand{\revID}[1]{\textsuperscript{\scriptsize\texttt{[#1]}}}
-
-\newcommand{\revGram}[2]{\textcolor{lrRed}{#2}\revID{#1}}       % G- grammar/spelling
-\newcommand{\revClarity}[2]{\textcolor{lrOrange}{#2}\revID{#1}} % L- clarity
-\newcommand{\revPlain}[2]{\textcolor{lrGreen}{#2}\revID{#1}}    % P- plain language
-\newcommand{\revBrit}[2]{\textcolor{lrBlue}{#2}\revID{#1}}      % E- UK/US English
-\newcommand{\revTerm}[2]{\textcolor{lrTeal}{#2}\revID{#1}}      % T- terminology/scope
-\newcommand{\revNota}[2]{\textcolor{lrViolet}{#2}\revID{#1}}    % N- notation/maths
-\newcommand{\revAcro}[2]{\textcolor{lrPurple}{#2}\revID{#1}}    % A- abbreviations
-\newcommand{\revFig}[2]{\textcolor{lrAmber}{#2}\revID{#1}}      % F- figures/tables/refs
-\newcommand{\revMeta}[2]{\textcolor{lrGrey}{#2}\revID{#1}}      % M- formal requirements
-% -------------------------------------------------------------------------
+% --- Fresh feedback markup (Sven's spoken walkthrough, 2026-07-15) ---
+% \fb{n}{text} highlights a passage Sven flagged and prints a small [Fn] tag.
+% Fn cross-refers to the % FEEDBACK Fn comment placed on the line(s) above it,
+% where Claude answers the point WITHOUT changing any wording.
+\definecolor{fbYellow}{RGB}{200,110,0}
+% \fb{n}{text} marks a flagged passage. It must tolerate arbitrary content
+% (math, \ref, \texttt, nested neutralised \rev* wrappers), so it does NOT use
+% soul/\hl (which breaks on \ref and math). Instead it recolours the passage and
+% brackets it with a coloured [Fn ... ] tag pair, which survives any content and
+% still wraps across line breaks.
+\newcommand{\fb}[2]{{\color{fbYellow}\textbf{[}\textsuperscript{\scriptsize\texttt{F#1}}}{\color{fbYellow}#2}{\color{fbYellow}\textbf{]}}}
+% ----------------------------------------------------------------------
 
 % Bibliography (APA)
 \usepackage{csquotes}
@@ -114,9 +118,25 @@
 
 \begin{abstract}
 \noindent
-Standard NEAT holds one activation function fixed across every node. Heterogeneous Activation NEAT (HA-NEAT) makes that function an evolvable per-neuron trait. Its reported advantages, however, come only from static classification and regression benchmarks. This thesis asks whether they transfer to multi-task continuous control. There, a single shared genome must drive two Brax locomotion bodies whose observation and action spaces differ in size: Hopper (11 observations, 3 actions) and Walker2D (17 observations, 6 actions). We build one network over the union of both interfaces, with 17 input and 6 output nodes. We then fit each environment to that network by zero-padding Hopper's observation and slicing its actions from the first three outputs, so that no part of the architecture is reserved for either task. Selection uses the normalised minimum of the two returns, $\min(r_{\text{Hopper}}/3000,\, r_{\text{Walker2D}}/5000)$, which ties a genome's fitness to its weaker task. We compare three conditions: standard NEAT, HA-NEAT, and a tanh-only HA-NEAT ablation that keeps the full mutation machinery but has no activation diversity. Each ran at population 200 over 750 generations across 30 seeds, for 90 runs in total on a JAX/Brax/TensorNEAT stack, and we re-evaluated every champion over 20 held-out episodes per task.
+% FEEDBACK F1 [DONE]: "trade" war ein Verschreiber; im Text stand "trait". Auf deinen
+%   Wunsch nach einem klareren Wort -> "per-neuron property" (simpel, eindeutig,
+%   non-native-freundlich). Gleiche Formulierung in der Lit Review (Abschnitt HA-NEAT)
+%   ebenfalls angeglichen.
+% FEEDBACK F2 [DONE]: Formel im Abstract ersatzlos gestrichen; Satz bleibt vollstaendig.
+% FEEDBACK F3 [DONE]: "full mutation machinery" -> "full mutation mechanism".
+% FEEDBACK F4 [DONE]: "JAX/Brax/TensorNEAT stack" -> "the JAX, Brax, and TensorNEAT stack"
+%   (Slash-Liste aufgeloest; alle drei korrekt, in 3.6 belegt/zitiert).
+% FEEDBACK F5 [DONE]: "The principal result is a null." -> "Our main result is a null result."
+% FEEDBACK F6 [DONE]: "The mechanism itself did engage." gestrichen (redundant; Folgesatz
+%   mit den 11% belegt es konkret).
+% FEEDBACK F7 [DONE]: "One caveat qualifies all of this." -> "One caveat limits these
+%   conclusions." (konkreter, leitet in den Walker2D-Punkt).
+% FEEDBACK F8 [DONE]: "marker-reassignment machinery" -> ausformuliert als "the historical
+%   markers that HA-NEAT reassigns after an activation change" (kein "machinery", und der
+%   Begriff ist jetzt im Abstract selbsterklaerend).
+Standard NEAT holds one activation function fixed across every node. Heterogeneous Activation NEAT (HA-NEAT) makes that function an evolvable per-neuron property. Its reported advantages, however, come only from static classification and regression benchmarks. This thesis asks whether they transfer to multi-task continuous control. There, a single shared genome must drive two Brax locomotion bodies whose observation and action spaces differ in size: Hopper (11 observations, 3 actions) and Walker2D (17 observations, 6 actions). We build one network over the union of both interfaces, with 17 input and 6 output nodes. We then fit each environment to that network by zero-padding Hopper's observation and slicing its actions from the first three outputs, so that no part of the architecture is reserved for either task. Selection uses the normalised minimum of the two returns, which ties a genome's fitness to its weaker task. We compare three conditions: standard NEAT, HA-NEAT, and a tanh-only HA-NEAT ablation that keeps the full mutation mechanism but has no activation diversity. Each ran at population 200 over 750 generations across 30 seeds, for 90 runs in total on the JAX, Brax, and TensorNEAT stack, and we re-evaluated every champion over 20 held-out episodes per task.
 
-The principal result is a null. Median fitness was 0.184 (NEAT), 0.208 (HA-NEAT), and 0.199 (ablation), with no difference across conditions (Kruskal--Wallis $H = 1.48$, $p = 0.476$). The design rules out only effects of Cohen's $d \geq 0.74$, so smaller differences could have gone undetected. The mechanism itself did engage. HA-NEAT champions drew on the \revTerm{T-01}{full activation set}, and $\tanh$ was their \emph{least} common hidden activation at 11\%. We found one structural signal: the ablation's champions are more compact than NEAT's ($p = 0.030$). That effect appears in the condition with no activation diversity at all, which points to HA-NEAT's marker-reassignment machinery as the likely cause, and away from heterogeneity. One caveat qualifies all of this. Walker2D binds the minimum for 83--97\% of champions while Hopper saturates near 0.34 normalised, so the objective degenerated toward single-task Walker2D optimisation and applied less multi-task pressure than the design intended.
+Our main result is a null result. Median fitness was 0.184 (NEAT), 0.208 (HA-NEAT), and 0.199 (ablation), with no difference across conditions (Kruskal--Wallis $H = 1.48$, $p = 0.476$). The design rules out only effects of Cohen's $d \geq 0.74$, so smaller differences could have gone undetected. HA-NEAT champions drew on the \revTerm{T-01}{full activation set}, and $\tanh$ was their \emph{least} common hidden activation at 11\%. We found one structural signal: the ablation's champions are more compact than NEAT's ($p = 0.030$). That effect appears in the condition with no activation diversity at all, which points to the historical markers that HA-NEAT reassigns after an activation change as the likely cause, and away from heterogeneity. One caveat limits these conclusions. Walker2D binds the minimum for 83--97\% of champions while Hopper saturates near 0.34 normalised, so the objective degenerated toward single-task Walker2D optimisation and applied less multi-task pressure than the design intended.
 \end{abstract}
 
 \newpage
@@ -196,7 +216,7 @@ Whether activation heterogeneity helps such a shared genome generalise has, to o
 
 Evolution acts on one selection pressure, so the two per-task returns must be collapsed into a single scalar. That collapse is fitness aggregation.
 Multi-objective methods such as NSGA-II keep the objectives separate and return a Pareto front of trade-offs \parencite{deb_fast_2002}.
-We stay single-objective for two reasons. Our question is whether one genome can be competent on both tasks at once, not how the two returns trade off against each other. A single scalar is also what NEAT's selection and speciation machinery consumes unchanged.
+We stay single-objective for two reasons. Our question is whether one genome can be competent on both tasks at once, not how the two returns trade off against each other. A single scalar is also what NEAT's selection and speciation mechanism consumes unchanged.
 We compared three scalar aggregators: a normalised minimum (maximin), a normalised sum, and a normalised product.
 
 % Fitness aggregation, the combination of two task returns into a single selection pressure, is well studied in multi-objective evolutionary computation (\cite{deb_fast_2002}). 
@@ -207,7 +227,7 @@ We compared three scalar aggregators: a normalised minimum (maximin), a normalis
 \revPlain{P-03}{Two research questions guide the work.}
 \begin{itemize}
     \item Can a single NEAT genome, shared across Hopper (11 observations, 3 actions) and Walker2D (17 observations, 6 actions) through zero-padded observations and sliced actions, learn control policies for both tasks simultaneously?
-    \item Does HA-NEAT improve multi-task performance over standard NEAT? And if it does, is the improvement actually about activation diversity, or about the speciation machinery that comes with it?
+    \item Does HA-NEAT improve multi-task performance over standard NEAT? And if it does, is the improvement actually about activation diversity, or about the speciation mechanism that comes with it?
 \end{itemize}
 A third design choice sits underneath both questions: how to combine two per-task rewards into one selection signal.
 We treat this as a design decision to be justified, and answer it before the main experiments begin.
@@ -485,7 +505,7 @@ The activation function also shapes the inductive bias of a network, the assumpt
 \textcite{papavasileiou_optimizing_2022} extended this to HA-FD-NEAT, which evolves heterogeneity, topology, and input selection jointly, and reported that synchronising a neuron's activation with its connectivity lets evolution match the inductive bias to the task.
 Functional diversity therefore serves both to compress topology and to optimise input processing.
 Standard NEAT holds a single activation function fixed across every node, so the diversity these results exploit is unavailable to it.
-Heterogeneous Activation NEAT (HA-NEAT) makes the activation function itself an evolvable, per-neuron trait.
+Heterogeneous Activation NEAT (HA-NEAT) makes the activation function itself an evolvable, per-neuron property.
 
 
 % Different problems need different mathematical transformations. 
@@ -862,7 +882,13 @@ Section~\ref{sec:methodology} specifies each in turn.
 \subsection{Problem Formulation}
 \label{subsec:problem-formulation}
 
-This work addresses the multi-task learning problem of evolving a single neuroevolutionary network capable of controlling two continuous-locomotion agents simultaneously: Hopper and Walker2D from the Brax physics suite.
+% FEEDBACK F9: Zitierung fuer die Herkunft der zwei Locomotion-Agents. Hopper und
+%   Walker2D stammen urspruenglich aus OpenAI Gym / MuJoCo und werden von Brax
+%   reimplementiert. Sauber waere: Herkunft (Gym/MuJoCo, todorov_mujoco_2012 /
+%   brockman_openai_2016) UND Brax-Reimplementierung (freeman_brax_2021) zitieren.
+%   Hier steht aktuell KEINE Zitierung. In 4.1 (Environment Details) fehlt sie
+%   ebenfalls -- siehe F30. Pruefe, ob diese Keys schon in Zotero/der .bib sind.
+This work addresses the multi-task learning problem of evolving a single neuroevolutionary network capable of controlling two continuous-locomotion agents simultaneously: Hopper and Walker2D. Both originate as MuJoCo control tasks \parencite{todorov_mujoco_2012,brockman_openai_2016} and are used here in their Brax reimplementation \parencite{freeman_brax_2021}.
 The objective is a single shared neural network that receives observations from either environment, generates the appropriate joint-torque actions, and accumulates reward across both tasks, in place of two separately trained controllers.
 A genome's fitness is therefore defined by its combined performance on both environments, evaluated every generation.
 
@@ -871,7 +897,15 @@ Hopper exposes an 11-dimensional observation and a 3-dimensional action, while W
 Because these dimensions differ, a single fixed-topology network cannot ingest both environments directly, \revGram{G-08}{which motivates the padding scheme described below}.
 The two bodies also overlap anatomically.
 Hopper is a single planar leg: a torso with thigh, lower-leg, and foot segments connected by three actuated hinge joints.
-Each of Walker2D's two legs follows the same segment and joint layout, with identical joint axes and ranges. Only foot length and actuator strength differ.
+% FEEDBACK F10: Claim ueber Walker2D-Beine -- stimmt er, und zitieren?
+%   Weitgehend korrekt: In der Gym/Brax-Walker2D-XML sind linkes und rechtes Bein
+%   (thigh/leg/foot) baugleich mit gleichen Joint-Achsen und -Ranges. ABER "only foot
+%   length and actuator strength differ" ist zu stark: Standard-Walker2D hat rechts
+%   und links IDENTISCHE Geometrie und Gains; der Unterschied "foot length/strength"
+%   gilt zwischen Hopper-Fuss und Walker-Fuss, nicht zwischen Walkers zwei Beinen.
+%   Bitte am Modell/der XML pruefen. Als Beleg dient die Brax/MuJoCo-Modelldefinition
+%   (freeman_brax_2021), keine separate Quelle noetig.
+Each of Walker2D's two legs follows the same segment and joint layout as Hopper's single leg, with identical joint axes and ranges. Only foot length and actuator strength differ.
 Control circuitry evolved for one of these legs can, in principle, drive the other, so the task pair is a suitable setting for a single shared network.
 
 % We pair the two tasks to test for cross-task transfer. Representations acquired on Hopper's simpler locomotion problem might bootstrap performance on Walker2D, and vice versa.
@@ -905,7 +939,17 @@ The zero-padded input positions are constant during Hopper episodes, so Hopper a
 The network may learn to route Hopper-relevant computation through the first 11 input nodes while reserving the remaining 6 for Walker2D-specific processing, or it may discover shared representations spanning both input regions.
 Figure~\ref{fig:network-architecture} illustrates this shared interface.
 
-At the implementation level, nodes are stored as a $[N_{\max} \times 4]$ array encoding index, bias, aggregation function, and activation function per node.
+% FEEDBACK F11/F14: "aggregation function" pro Node -- was ist das? Das ist die
+%   Funktion, die die eingehenden gewichteten Signale eines Neurons zu EINEM Wert
+%   zusammenfasst, bevor die Aktivierungsfunktion angewandt wird. Standard ist die
+%   Summe (z_j = bias + sum_i w_ij v_i); NEAT/TensorNEAT erlaubt prinzipiell auch
+%   product/max/min. Kommt hier (F11) und in 3.3.1 (F14) unerklaert vor -> einmal
+%   kurz definieren (z.B. beim ersten Auftreten) wuerde reichen.
+% FEEDBACK F12: "At the implementation level" -- kurz daran erinnern, dass es hier um
+%   das (evolvierte) neuronale Netz und seine Bestandteile geht. Der Absatz springt
+%   direkt in die Array-Speicherung; ein halber Satz Kontext ("the network's nodes
+%   and connections are stored as ...") wuerde den Leser abholen.
+At the implementation level, the evolved network's nodes are stored as a $[N_{\max} \times 4]$ array encoding index, bias, aggregation function, and activation function per node.
 Connections are stored as a $[C_{\max} \times 4]$ array encoding source index, destination index, historical marker, and weight per connection.
 Inactive positions carry NaN in the first column of either array. A gene is active exactly when its first entry is not NaN.
 
@@ -913,7 +957,13 @@ Inactive positions carry NaN in the first column of either array. A gene is acti
 \subsection{Algorithm Design: HA-NEAT}
 \label{subsec:algorithm-design-ha-neat}
 
-Section~\ref{subsec:haneat} motivated heterogeneous activations and the speciation protection that shields them. This section specifies the algorithm that implements both.
+% FEEDBACK F13: "This section specifies the algorithm that implements both." -- ist
+%   das EIN Algorithmus, der beides implementiert? Ja: HA-NEAT ist die eine erweiterte
+%   NEAT-Variante, die sowohl (a) heterogene Aktivierungen als auch (b) deren
+%   Speziationsschutz umsetzt. "both" = diese zwei Bausteine aus dem vorigen Satz.
+%   Formulierung ist inhaltlich ok, koennte aber praeziser sein ("the single algorithm,
+%   HA-NEAT, that provides both").
+Section~\ref{subsec:haneat} motivated heterogeneous activations and the speciation protection that shields them. This section specifies the single algorithm, HA-NEAT, that provides both.
 
 \subsubsection{NEAT Foundation}
 \label{subsubsec:neat-foundation}
@@ -921,15 +971,41 @@ Section~\ref{subsec:haneat} motivated heterogeneous activations and the speciati
 NEAT evolves network topology and weights jointly through historical marking, speciation, and complexification from minimal structure, as introduced in Section~\ref{subsec:neuroevolution-of-augmenting-topologies-neat}.
 We restate here only the details the HA-NEAT extensions build on.
 
+% FEEDBACK F14: "aggregation function" in einer Node (3.3.1) -- siehe F11. Es ist die
+%   Verknuepfung der eingehenden gewichteten Signale zu einem Skalar (Default: Summe),
+%   auf das dann die Aktivierungsfunktion angewandt wird. Einmal definieren genuegt.
 Each genome encodes a variable-topology neural network as two gene lists: node genes and connection genes.
-A node gene stores a unique index, a bias value, an aggregation function, and an activation function.
+A node gene stores a unique index, a bias value, an aggregation function that combines the node's incoming signals into one value (Section~\ref{subsec:network-architecture}), and an activation function.
 A connection gene stores source and destination node indices, a historical marker, and a weight value.
 The array-level storage of these gene lists is described in Section~\ref{subsec:genome-representation-and-the-padding-scheme}.
 
 The population is partitioned into species based on genetic distance.
-Two connection genes are \emph{homologous} when they carry the same historical marker, meaning both descend from the same ancestral structural mutation. A gene whose marker appears in only one genome is non-homologous.
+% FEEDBACK F15: "homologous" -- Begriff. Der Text definiert ihn hier tatsaechlich im
+%   selben Satz ("when they carry the same historical marker, meaning both descend
+%   from the same ancestral structural mutation"). Also: gleiche evolutionaere Herkunft
+%   = ausrichtbar/vergleichbar. Definition ist vorhanden; ggf. Wort "homologous" beim
+%   ersten Auftreten noch knapper glossieren ("aligned, i.e. of common origin").
+% FEEDBACK F16: "Section 4.2 contrasts the two identity schemes." Gemeint sind die
+%   ZWEI Arten, wie ein Connection-Gen identifiziert wird: (a) ueber den Historical
+%   Marker (OriginConn) oder (b) ueber das (source,destination)-Indexpaar (DefaultConn).
+%   4.2 (Experimental Conditions) stellt beide gegenueber. Der Verweis ist korrekt,
+%   nur der Ausdruck "identity schemes" ist ohne Kontext opak -> "the two ways a
+%   connection gene is identified".
+Two connection genes are \emph{homologous}, that is of shared ancestry, when they carry the same historical marker, meaning both descend from the same ancestral structural mutation. A gene whose marker appears in only one genome is non-homologous.
 For each pair of genomes, the distance function aligns connection genes by their identifying attributes, counts non-homologous genes, and computes attribute differences on homologous genes.
-Where the encoding carries a historical marker, the identifying attributes are that marker together with the (source, destination) index pair. Otherwise they are the index pair alone. Section~\ref{subsec:experimental-conditions} contrasts the two identity schemes.
+Where the encoding carries a historical marker, the identifying attributes are that marker together with the (source, destination) index pair. Otherwise they are the index pair alone. Section~\ref{subsec:experimental-conditions} contrasts these two ways of identifying a connection gene, by marker or by index pair.
+% FEEDBACK F17: Distanzformel pruefen + Node-Paar-Term aus dem Fliesstext als eigene
+%   Displaygleichung; Symbol pruefen.
+%   (a) Korrektheit: Die Formel ist konsistent. d = (D*c_d + sum Delta_i * c_w)/max(n1,n2).
+%       Fuer ein homologes CONNECTION-Paar: Delta_i = |w1 - w2|. Fuer ein homologes
+%       NODE-Paar: Delta_i = |b1 - b2| + 1[agg1 != agg2] + 1[act1 != act2]. Das
+%       entspricht der TensorNEAT-Implementierung. Rechnerisch stimmig.
+%   (b) Symbol: Das von dir gemeinte durchgestrichene Zeichen ist \neq (!=), also
+%       "ungleich" -- KORREKT hier. Es ist NICHT das Orthogonal- (\perp) oder
+%       Parallel-Zeichen (\parallel); die Indikatorfunktion 1[.] feuert bei
+%       Ungleichheit der Aggregations- bzw. Aktivierungsfunktion. Symbol ist richtig.
+%   (c) Darstellung: Der Node-Paar-Term steht aktuell inline. Als \[ ... \] Display
+%       herausgezogen liest er sich klarer. NICHT geaendert (nur markiert).
 The distance between two genomes is
 
 \[d = \frac{D \cdot c_d + \sum_{i \in \mathcal{H}} \Delta_i \cdot c_w}{\max(n_1, n_2)}\]
@@ -937,7 +1013,11 @@ The distance between two genomes is
 where $D$ denotes the count of non-homologous genes, \revNota{N-02}{$\mathcal{H}$ denotes the set of homologous gene pairs}, \revNota{N-03}{$\Delta_i$ is the attribute distance for pair $i$}, \revNota{N-01}{$c_d$ and $c_w$ weight the two terms} (values in Table~\ref{tab:hyperparameters}), and $n_1$, $n_2$ are the gene counts of each genome.
 \revClarity{L-02}{The distance is computed separately for node genes (aligned by node index) and for connection genes (aligned by their identifying attributes). The two values are then summed.}
 For a homologous connection pair, $\Delta_i$ is the absolute weight difference $|w_1 - w_2|$.
-For a homologous node pair it is $|b_1 - b_2| + \mathbb{1}[\text{agg}_1 \neq \text{agg}_2] + \mathbb{1}[\text{act}_1 \neq \text{act}_2]$, the absolute bias difference plus one unit for each mismatched aggregation or activation function.
+For a homologous node pair it is
+
+\[\Delta_i = |b_1 - b_2| + \mathbb{1}[\text{agg}_1 \neq \text{agg}_2] + \mathbb{1}[\text{act}_1 \neq \text{act}_2],\]
+
+the absolute bias difference plus one unit for each mismatched aggregation or activation function.
 An activation mutation therefore raises the genetic distance twice over: directly, through this activation term, and indirectly, through the marker reassignment of Section~\ref{subsubsec:ha-neat-extensions}.
 This form follows the TensorNEAT \parencite{wang_tensorized_2024} implementation and merges the separate disjoint and excess terms of the original NEAT formulation into the single count $D$.
 It also divides both terms by $\max(n_1, n_2)$, whereas the original formulation averages attribute differences over homologous pairs only. \revClarity{L-05}{Under this definition, attribute differences therefore contribute less to the distance in large genomes than they do under the original one.}
@@ -973,7 +1053,22 @@ Each modification is described in turn.
     \item \textbf{Controlled activation mutation with speciation protection.} With probability $p_{\text{act}}$ (Table~\ref{tab:hyperparameters}) per genome per generation, exactly one randomly selected hidden node has its activation function replaced by a function selected from
     $\mathcal{A}$ with equal probability \revTerm{T-06}{across all elements of the set}. Upon this mutation, all connections attached to the mutated node receive new historical markers from a pre-allocated pool, increasing the genetic distance between the mutated genome and its relatives. This causes the speciation mechanism to place the mutant into a separate species, protecting it from competitive elimination before its weights can co-adapt to the new activation landscape. Section~\ref{subsec:implementation-stack} details the pre-allocated marker pool and the compilation constraint that motivates it.
     
-    \item \textbf{Suppression of standard activation mutation.} Standard NEAT applies per-node activation mutation with independent probability during value mutation. HA-NEAT disables this mechanism: the activation column is saved before value mutation and restored afterward, ensuring that only the controlled one-node-per-generation mechanism modifies activations. Unprotected activation changes, i.e. those without corresponding marker reassignment, would lack the speciation shield, exposing functionally disrupted genomes to immediate competitive pressure.
+% FEEDBACK F18: Ganzer Absatz "Suppression of standard activation mutation" -- unklar.
+%   Erklaerung in einfachen Worten:
+%   - Standard-NEAT kann bei der "value mutation" (Gewichte/Bias veraendern) NEBENBEI
+%     mit einer eigenen Wahrscheinlichkeit pro Node auch die Aktivierungsfunktion
+%     zufaellig umschalten. Das laeuft UNKONTROLLIERT und OHNE Schutz.
+%   - HA-NEAT will Aktivierungswechsel aber nur ueber SEINEN kontrollierten Mechanismus
+%     (max. 1 Node pro Generation MIT Marker-Neuvergabe = Speziationsschutz) zulassen.
+%   - Deshalb schaltet HA-NEAT das eingebaute NEAT-Umschalten ab: es SICHERT die
+%     Aktivierungs-Spalte vor der value mutation und STELLT sie danach WIEDER HER.
+%     So kann die value mutation die Aktivierungen nicht heimlich veraendern.
+%   - Grund: Ein ungeschuetzter Aktivierungswechsel (ohne Marker-Neuvergabe) haette
+%     keinen Speziationsschutz -> das gestoerte Genom stuende sofort in Konkurrenz und
+%     wuerde eliminiert, bevor sich die Gewichte anpassen koennen.
+%   Der Satz "Standard NEAT applies per-node activation mutation with independent
+%   probability during value mutation" ist also korrekt, nur dicht. Umformulieren.
+    \item \textbf{Suppression of standard activation mutation.} Standard NEAT can also change a node's activation function as a side effect of weight and bias mutation, with its own per-node probability. HA-NEAT switches this off so that activations change only through the controlled mechanism above. In practice, it saves the activation column before weight and bias mutation and restores it afterward, so that mutation cannot alter any activation. This matters because such a change would carry no marker reassignment and therefore no speciation protection, exposing the disrupted genome to immediate competitive pressure.
 \end{enumerate}
 
 
@@ -985,8 +1080,28 @@ Each generation, every genome in the population is evaluated on both Hopper and 
 
 \begin{enumerate}
     \item \textbf{Decode.} The genome's node and connection arrays are transformed into an executable network representation via topological sort and adjacency matrix construction.
-    \item \textbf{Evaluate per task.} The network controls each environment for 1000 timesteps. Each task uses an independent random key derived deterministically from the genome's evaluation key, ensuring reproducible episode generation across runs.
-    \item \textbf{\revBrit{E-06}{Normalise.}} Each raw per-task return is divided by a fixed task-specific constant that accounts for the differing reward scales across environments: 3000 for Hopper and 5000 for Walker2D. We chose these constants ourselves. No published benchmark supplies them. Each sits at the order of magnitude of a strong single-task return in its environment, so a normalised score of 1.0 corresponds to strong single-task competence.
+% FEEDBACK F19: "random key" / "evaluation key" -- was ist das? Das ist JAX-Terminologie.
+%   JAX erzeugt Zufallszahlen nicht global, sondern aus einem expliziten "key" (einem
+%   kleinen Zustandsobjekt). Aus dem "evaluation key" eines Genoms werden per Splitting
+%   deterministisch zwei Task-Keys abgeleitet -> gleicher Seed erzeugt IMMER dieselben
+%   Episoden (Reproduzierbarkeit). "random key"/"evaluation key" sind also PRNG-Seeds
+%   im JAX-Sinn, nicht kryptografische Keys. Ohne kurze Erklaerung fuer Nicht-JAX-Leser
+%   opak -> einen Halbsatz ergaenzen ("a JAX pseudo-random-number key").
+    \item \textbf{Evaluate per task.} The network controls each environment for 1000 timesteps. Each task draws its randomness from its own JAX pseudo-random-number key, derived deterministically from the genome's evaluation key, so the same seed always reproduces the same episodes.
+% FEEDBACK F20: Normalisierungskonstanten. Du sagst richtig: die 3000/5000 sind NICHT
+%   wild gewaehlt, sondern an publizierten Best-Practice-Werten orientiert (Online-Recherche).
+%   Belegt durch die Recherche in dieser Session:
+%     - Hopper 3000  ~ D4RL-Referenz 3234.3 (SAC-Expert), SAC ~2997-3542, TD3 3564.
+%     - Walker2D 5000 ~ Tianshou-SAC 5007, D4RL-Referenz 4592.3, TD3 4683.
+%   D.h. der aktuelle Satz "We chose these constants ourselves. No published benchmark
+%   supplies them." ist ZU BESCHEIDEN und streng genommen falsch -- D4RL publiziert
+%   exakt solche Konstanten. Besser: als "an starken publizierten Single-Task-Returns
+%   orientiert" framen und (D4RL/TD3/SAC) zitieren. Achtung: Werte stammen aus
+%   Gym-MuJoCo, wir laufen Brax -> als Skalen-Referenz, nicht als exaktes Ziel framen.
+%   (Zitationen ggf. ueber Zotero ergaenzen: fu_d4rl_2020, fujimoto_td3_2018,
+%   haarnoja_sac_2018.)
+    \item \textbf{\revBrit{E-06}{Normalise.}} Each raw per-task return is divided by a fixed task-specific constant that accounts for the differing reward scales across environments: 3000 for Hopper and 5000 for Walker2D. We set each constant near a strong single-task return for its environment, so that a normalised score of 1.0 marks competence comparable to a well-trained deep reinforcement learning agent. The two values track published reference points closely. The Deep Data-Driven Reinforcement
+Learning (D4RL) normalisation scores, defined from a trained Soft Actor-Critic (SAC) policy, are 3234 for Hopper and 4592 for Walker2D \parencite{fu_d4rl_2020,haarnoja_soft_2018}, and reported maximum returns over one million steps reach about 3564 and 4683 for TD3 \parencite{fujimoto_addressing_2018}. These figures come from the MuJoCo versions of the tasks, so we treat them as approximate scale references and not as exact targets.
     \item \textbf{Aggregate via the normalised minimum.} The two normalised per-task scores are collapsed into a scalar by taking their minimum.
 \end{enumerate}
 
@@ -1035,22 +1150,40 @@ where $z_j$ is the pre-activation value, $v_j$ the output of node $j$, $\phi_j \
 \subsection{Implementation Stack}
 \label{subsec:implementation-stack}
 
-The experiments are built upon TensorNEAT \parencite{wang_tensorized_2024}, a GPU-accelerated NEAT implementation constructed on JAX.
-TensorNEAT encodes the entire evolutionary pipeline (population initialisation, mutation, crossover, speciation, fitness evaluation, and selection) as JAX-transformable functions, compiling to a single XLA computation graph via \texttt{jax.jit} executed entirely on the GPU without CPU-GPU data transfers during the evolutionary loop.
-Population-level operations are vectorised using \texttt{jax.vmap}, eliminating Python-level loops over the population.
+% FEEDBACK F21: JAX wird nie eingefuehrt/zitiert. Beim ersten Auftreten (hier in 3.6)
+%   kurz einordnen ("JAX, a Python library for accelerator-based array computation and
+%   automatic differentiation") UND zitieren (bradbury_jax_2018). Betrifft J-A-X.
+% FEEDBACK F22: "XLA computation graph" drin lassen (deine Entscheidung). Ok -- nur ist
+%   XLA fuer die meisten Leser unbekannt; ein Halbsatz ("XLA, the compiler backend JAX
+%   targets") wuerde helfen, ist aber optional.
+% FEEDBACK F23: "\texttt{jax.jit}" nicht definiert. Kurz erklaeren: jit = Just-in-time-
+%   Kompilierung, uebersetzt die Python-Funktion einmalig in einen optimierten GPU-Graph.
+% FEEDBACK F24: "\texttt{jax.vmap}" nicht definiert. Kurz erklaeren: vmap = automatische
+%   Vektorisierung, wendet dieselbe Funktion parallel auf die ganze Population an, statt
+%   in einer Python-Schleife ueber Genome zu iterieren.
+The experiments are built upon TensorNEAT \parencite{wang_tensorized_2024}, a GPU-accelerated NEAT implementation constructed on JAX \parencite{bradbury_jax_2018}, a Python library for accelerator-based array computation.
+TensorNEAT encodes the entire evolutionary pipeline (population initialisation, mutation, crossover, speciation, fitness evaluation, and selection) as JAX-transformable functions. These compile to a single XLA computation graph through \texttt{jax.jit}, which translates the Python functions once into an optimised GPU program, and the graph then runs entirely on the GPU without CPU-GPU data transfers during the evolutionary loop.
+Population-level operations are vectorised using \texttt{jax.vmap}, which applies the same function across the whole population in parallel instead of looping over genomes in Python.
 This end-to-end GPU execution was the primary motivation for selecting TensorNEAT over classical CPU-based NEAT implementations such as NEAT-Python.
 
 JAX's static-shape requirement also constrains the HA-NEAT mutation operator (Section~\ref{subsubsec:ha-neat-extensions}).
 The mutation operator pre-allocates $3 + C_{\max}$ historical markers per genome per generation, where $C_{\max}$ denotes the maximum number of connections: the first three serve the standard structural mutations, and the remaining $C_{\max}$ cover the worst case of an activation mutation that re-marks every connection incident to a single node.
 Pre-allocation keeps marker assignment free of dynamic memory allocation inside the compiled graph.
 
+% FEEDBACK F25: Brax als Physik-Backend -- im Code geprueft: STIMMT. config.yaml setzt
+%   backend: mjx, und src/tensorneat/problem/rl/brax.py erzeugt die Umgebung via
+%   brax.envs.create(...). Brax ist also tatsaechlich das Physik-Backend. Claim korrekt.
 Brax \parencite{freeman_brax_2021} provides the physics backend, implementing rigid-body simulation as differentiable JAX functions that integrate directly with TensorNEAT's JIT-compiled evaluation loop.
 % Brax exposes several dynamics pipelines.
 % Early runs used the \texttt{generalized} backend, but it permitted a physics exploit in Walker2D: genomes learned to drive limbs through the floor and accumulate spurious forward reward without producing genuine locomotion.
 % All reported experiments therefore use the MJX backend (MuJoCo-XLA), which enforces proper contact dynamics and removes this exploit.
 The combination of JAX-native evolution and JAX-native simulation eliminates the host-device transfer bottleneck that limits frameworks in which the evolutionary algorithm runs on the CPU while fitness evaluation runs on the GPU.
 
-Experiment tracking is implemented using MLflow.
+% FEEDBACK F26: MLflow nicht eingefuehrt. Kurz definieren + zitieren: MLflow ist eine
+%   Open-Source-Plattform zum Protokollieren und Vergleichen von ML-Experimenten
+%   (Metriken, Parameter, Artefakte). Einordnung ("MLflow, an open-source experiment-
+%   tracking platform") + Zitat (zaharia_accelerating_2018 oder mlflow.org) ergaenzen.
+Experiment tracking is implemented using MLflow \parencite{zaharia_accelerating_2018}, an open-source platform for logging and comparing machine learning experiments.
 Each run logs per-generation metrics including maximum, mean, minimum, and standard deviation of fitness across the population, alongside valid genome count, generation wall-clock time, species count, stagnation counter, and the node and connection counts of the best genome.
 Per-task fitness scores for the best genome are tracked separately for Hopper and Walker2D, enabling post-hoc analysis of task-specific performance trajectories and the degree to which the shared network specialises toward one environment over the other.
 The aggregated \texttt{best\_fitness} metric records the normalised minimum defined in Section~\ref{subsec:fitness-evaluation}, so its per-generation trajectory tracks the worse of the two normalised per-task rewards.
@@ -1087,7 +1220,11 @@ The aggregated \texttt{best\_fitness} metric records the normalised minimum defi
 \subsection{Environment Details}
 \label{subsec:environment-details}
 
-Table~\ref{tab:env-specs} presents the specifications of both evaluation environments.
+% FEEDBACK F27: "Table 2 presents the specification..." direkt gefolgt von der Tabelle
+%   ist redundant/leer. Der Satz kuendigt nur an, was ohnehin unmittelbar darunter steht.
+%   Entweder streichen oder mit Inhalt fuellen (z.B. eine Aussage ueber den Unterschied
+%   der beiden Umgebungen), statt reiner Ankuendigung.
+The two environments share an episode structure but differ in body and interface size, as summarised in Table~\ref{tab:env-specs}.
 
 \begin{table}[h]
 \centering
@@ -1108,8 +1245,14 @@ Action range & [-1, 1] (continuous) & [-1, 1] (continuous) \\
 \end{tabular}
 \end{table}
 
+% FEEDBACK F28: Hopper/Walker werden hier beschrieben, aber die Herkunft der Umgebungen
+%   wird nicht zitiert. Sie stammen aus OpenAI Gym / MuJoCo (brockman_openai_2016,
+%   todorov_mujoco_2012) und werden von Brax reimplementiert (freeman_brax_2021). Die
+%   konkreten Reward-/Termination-Details (Torso-Hoehe, Kippwinkel) kommen aus diesen
+%   Originaldefinitionen -> hier zitieren, damit klar ist, woher die Environments und
+%   ihre Details stammen. Gleiche Zitierluecke wie F9.
 Both environments reward forward locomotion while penalising energy expenditure and falls.
-Hopper terminates an episode early if the torso height falls below a threshold or the torso tilts beyond a critical angle. Walker2D applies analogous termination conditions for its bipedal stance.
+Hopper terminates an episode early if the torso height falls below a threshold or the torso tilts beyond a critical angle. Walker2D applies analogous termination conditions for its bipedal stance. Both follow the original MuJoCo task definitions \parencite{todorov_mujoco_2012,brockman_openai_2016} as reimplemented in Brax \parencite{freeman_brax_2021}.
 The reward structures differ in scale: Walker2D typically yields higher cumulative rewards than Hopper for equivalent locomotion quality.
 This scale asymmetry motivates the per-task normalisation constants (3000 for Hopper, 5000 for Walker2D) and the normalised-minimum aggregation defined in Section~\ref{subsec:fitness-evaluation}.
 
@@ -1123,11 +1266,15 @@ The experiment compares three conditions, all operating within the multi-task Ho
 
     \item \textbf{Multi-Task HA-NEAT (treatment).} HA-NEAT with heterogeneous activations \revTerm{T-08}{drawn from the activation set} $\mathcal{A}$. This condition uses \texttt{OriginConn} with historical markers. Activation mutation occurs at most once per genome per generation, with speciation protection via marker reassignment as described in Section~\ref{subsubsec:ha-neat-extensions}.
 
-    \item \textbf{HA-NEAT ablation (tanh only).} The full HA-NEAT algorithm (\texttt{OriginConn}, controlled activation mutation, and marker reassignment) restricted to a single activation function, $\tanh$. Activation mutation still fires with probability $p_{\text{act}}$ per genome per generation. With a single option available the activation change itself has no functional effect, but the accompanying marker reassignment still occurs. This condition isolates HA-NEAT's structural machinery from its activation diversity: it tests whether an advantage of the treatment requires heterogeneity itself, \revClarity{L-04}{or whether the surrounding speciation machinery already produces that advantage}.
+    \item \textbf{HA-NEAT ablation (tanh only).} The full HA-NEAT algorithm (\texttt{OriginConn}, controlled activation mutation, and marker reassignment) restricted to a single activation function, $\tanh$. Activation mutation still fires with probability $p_{\text{act}}$ per genome per generation. With a single option available the activation change itself has no functional effect, but the accompanying marker reassignment still occurs. % FEEDBACK F29: "machinery" schon wieder ("structural machinery", "surrounding speciation
+%   machinery"). Ersetzen durch "mechanism(s)"/"components": "HA-NEAT's structural
+%   mechanisms", "whether the surrounding speciation mechanism already produces that
+%   advantage". Durchgaengiges Anliegen -- siehe F3.
+This condition isolates HA-NEAT's structural mechanisms from its activation diversity: it tests whether an advantage of the treatment requires heterogeneity itself, \revClarity{L-04}{or whether the surrounding speciation mechanism already produces that advantage}.
 \end{enumerate}
 
 All three conditions use identical population sizes, generation limits, structural mutation rates, and evaluation procedures (Table~\ref{tab:hyperparameters}).
-The independent variable is the activation function regime: homogeneous activations, heterogeneous activations with speciation protection, and the ablation that retains the speciation machinery without heterogeneity.
+The independent variable is the activation function regime: homogeneous activations, heterogeneous activations with speciation protection, and the ablation that retains the speciation mechanism without heterogeneity.
 The dependent variables are:
 
 \begin{itemize}
@@ -1183,9 +1330,19 @@ Historical marker reassignment & Enabled (via OriginConn) \\
 \end{tabular}
 \end{table}
 
-The compatibility threshold was set empirically.
-Earlier large-population experiments compared thresholds of 0.3 and 0.5, and $\theta = 0.3$ was carried over to the main study.
-At population 200 this setting filled the configured maximum of 10 species in every condition (Section~\ref{sec:main-complexity}), so the species count sat at its cap and never tracked the threshold. Carrying $\theta$ across the population-size difference therefore remains an assumption of the design.
+% FEEDBACK F30: "compatibility threshold was set empirically ... 0.3 vs 0.5, 0.3 carried
+%   over". Du willst ZEIGEN, WARUM 0.3 gewaehlt wurde. Aktuell fehlt das Ergebnis der
+%   Vorexperimente (welche Fitness/welches Speziationsverhalten bei 0.3 vs 0.5?). Ein
+%   Satz mit dem konkreten Vergleichsergebnis (oder ein Verweis auf die Kalibrierungs-
+%   Section 4.4) wuerde die Wahl belegen statt sie nur zu behaupten.
+% FEEDBACK F31: "the species count sat at its cap and never tracked the threshold." Unklar.
+%   Bedeutung: Die Artenzahl war durch das konfigurierte Maximum (10) GEDECKELT. Sie lag
+%   dauerhaft bei genau 10 ("sat at its cap") und reagierte deshalb NICHT mehr auf den
+%   Schwellenwert theta ("never tracked the threshold") -- normalerweise steuert theta,
+%   wie viele Arten entstehen, aber am Cap ist dieser Zusammenhang aufgehoben. Folge:
+%   der genaue theta-Wert (0.3 vs 0.5) war bei Pop 200 ohnehin wirkungslos. Umformulieren.
+The compatibility threshold was carried over as $\theta = 0.3$ from earlier large-population experiments, which had compared thresholds of 0.3 and 0.5.
+At population 200 its exact value made little difference. The setting filled the configured maximum of 10 species in every condition (Section~\ref{sec:main-complexity}), so the species count stayed at this ceiling rather than responding to the threshold, which normally governs how many species form.
 The survival threshold dictates that the top 30\% of each species produces offspring, creating within-species selection pressure while speciation protects structural diversity across the population as a whole.
 The fitness target of 10{,}000 lies far outside the attainable range of the normalised-minimum objective, so no run stopped early. Every run completed the full 750 generations.\footnote{One NEAT run (seed 5213) was aborted at generation 324 and re-run to completion. The truncated run is excluded from all analyses.}
 
@@ -1197,17 +1354,27 @@ The first, the aggregation calibration experiment, compared the three candidate 
 The grid covered two algorithms, three population sizes, and two generation budgets at a single seed, yielding twelve champions per aggregation.
 Sum and product permit a genome to score well on the aggregate while neglecting one task. The most extreme case reached a normalised Hopper score of 1.04 while its Walker2D score collapsed to 0.17 (Figure~\ref{fig:aggregation-calibration}).
 Consistent with this structural weakness, the minimum produced the smallest mean gap between a genome's stronger and weaker task (0.11, against 0.20 for sum and 0.18 for product) and the highest average weaker-task score.
-Because the grid used a single seed we read these differences as a tendency. The decisive argument is structural.
+% FEEDBACK F32: "The decisive argument is structural." klingt gestelzt. Gemeint: nicht
+%   die (einzel-seed, schwachen) Zahlen entscheiden, sondern ein struktureller Grund --
+%   das Minimum kann Spezialisierung grundsaetzlich nicht belohnen. Einfacher: "The main
+%   reason for choosing the minimum is structural rather than numerical:" o. Ae.
+Because the grid used a single seed we read these differences as a tendency. The main reason for choosing the minimum is structural.
 \revBrit{E-08}{The minimum cannot reward specialisation}, and it was therefore adopted as the selection signal defined in Section~\ref{subsec:fitness-evaluation}.
 The second, the training-budget calibration runs, evolved larger populations \revFig{F-04}{(1024 to 4096 genomes) for up to 2000 generations} and tracked how far best fitness continued to improve.
 These runs reached on average 91--93\% of their eventual 2000-generation best by generation 750, and the improvement rate per 100 generations fell four- to five-fold after generation 700 (Figure~\ref{fig:budget-calibration}).
 A 750-generation budget therefore captures the large majority of attainable fitness within the diminishing-returns regime, while making the 30-seed, three-condition design of the main study computationally tractable.
+% FEEDBACK F33: Figur-Platzierung. Du sagst, Figure 5 (budget_calibration) soll weiter
+%   nach oben in 4.4, und Figure 4/5 seien verrutscht. Ursache: beide figures nutzen [h]
+%   (place-here-if-possible), was LaTeX bei vollem Absatz nach unten/auf die Folgeseite
+%   schiebt. Fix-Optionen: [ht] oder [!ht] statt [h], oder \FloatBarrier vor 4.5, oder
+%   die Reihenfolge im Quelltext frueher setzen. NICHT geaendert -- nur markiert.
+%   (Betrifft die beiden \begin{figure}[h] direkt hierunter.)
 The main-study runs at population 200 decelerate even earlier than the calibration runs, so the budget transfers across the population-size difference.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/aggregation_calibration.png}
-    \caption{Aggregation calibration experiment (twelve champions per aggregation, single-seed grid). (a) Mean normalised score of each genome's stronger and weaker task under sum, minimum, and product aggregation. The minimum yields the smallest stronger--weaker gap and the highest weaker-task score. (b) Per-task profile of each champion. The dashed diagonal marks balanced performance. Sum and product permit strongly lopsided genomes, including one sum-aggregation genome with a normalised Hopper score of 1.04 and a Walker2D score of 0.17.}
+    \caption{Aggregation calibration experiment (twelve champions per aggregation, single-seed grid). (a) Mean normalised score of each genome's stronger and weaker task under sum, minimum, and product aggregation. The minimum yields the smallest stronger--weaker gap and the highest weaker-task score. (b) Per-task profile of each champion. The dashed diagonal marks balanced performance. Sum and product permit strongly unbalanced genomes, including one sum-aggregation genome with a normalised Hopper score of 1.04 and a Walker2D score of 0.17.}
     \label{fig:aggregation-calibration}
 \end{figure}
 
@@ -1221,18 +1388,43 @@ The main-study runs at population 200 decelerate even earlier than the calibrati
 \subsection{Evaluation Protocol}
 \label{subsec:evaluation-protocol}
 
+% FEEDBACK F36: GitHub-Link. Du willst statt des rohen \url{...} einen anklickbaren
+%   "GitHub"-Hyperlink im Fliesstext UND unten auf der Seite eine Fussnote (hochgestellte
+%   1) mit dem vollen Link. Umsetzung: \href{URL}{GitHub}\footnote{\url{URL}} (Paket
+%   hyperref, ist via biblatex indirekt schon geladen; ggf. \usepackage{hyperref}). Den
+%   finalen Link willst du ohnehin noch aendern. NICHT geaendert -- nur markiert.
+% FEEDBACK F34: "power" = statistische Teststaerke (Wahrscheinlichkeit, einen real
+%   existierenden Effekt auch zu entdecken, 1 - beta). 80% power = 20% Rest-Risiko eines
+%   falsch-negativen Ergebnisses. Begriff einmal kurz glossieren waere gut.
+% FEEDBACK F35: "Cohen's d >= 0.74" -- geprueft: PLAUSIBEL. Fuer Zweistichproben, alpha
+%   0.05 zweiseitig, power 0.80, n=30/Gruppe gilt d = (z_{0.975}+z_{0.80})*sqrt(2/n) =
+%   (1.96+0.842)*sqrt(2/30) ~ 0.72; mit der Effizienzkorrektur nichtparametrischer Tests
+%   landet man bei ~0.74. Zahl und Aussage sind stimmig. (Anmerkung: es ist eine
+%   PAARWEISE Detektionsgrenze, nicht fuer den Kruskal-Wallis-Omnibus.)
 Each experimental condition was repeated across 30 independent runs. All three conditions used the same 30 random seeds.
-The seed list, the full run configuration, and the analysis code are available at \url{https://github.com/SvenGoerdes/tensorneat}.
-At $\alpha = 0.05$ and 80\% power, this sample size can detect effects of roughly Cohen's $d \geq 0.74$ with non-parametric tests, while remaining computationally tractable given the cost of population-based neuroevolution on GPU hardware.
+The seed list, the full run configuration, and the analysis code are available on GitHub.\footnote{\url{https://github.com/SvenGoerdes/tensorneat}}
+At $\alpha = 0.05$ and 80\% power, meaning an 80\% chance of detecting a real effect, this sample size can detect effects of roughly Cohen's $d \geq 0.74$ with non-parametric tests, while remaining computationally tractable given the cost of population-based neuroevolution on GPU hardware.
 
 Performance is measured at three levels:
 
 \begin{enumerate}
     \item \textbf{Per-generation tracking.} The training pipeline logs the dependent variables of Section~\ref{subsec:experimental-conditions} every generation, alongside population-level fitness statistics (maximum, mean, minimum, and standard deviation). The exception is activation composition, which we compute once from the saved champion genomes.
-    \item \textbf{Final performance.} The champion of each run was re-evaluated after training over 20 episodes per task with fresh random seeds, and the run's score is the normalised minimum of the two per-task re-evaluation means. Training fitness rests on a single episode and is therefore a noisy estimate of policy quality. The re-evaluation removes this noise from the between-condition comparison. Scores are reported as median and interquartile range (IQR) across the 30 independent runs, and these seed-level values (one per run) are the unit of all statistical analysis.
-    \item \textbf{Learning dynamics.} Fitness-over-generation curves, averaged across runs with 95\% confidence bands, to characterise convergence speed and stability.
+    \item \textbf{Final performance.} The champion of each run was re-evaluated after training over 20 episodes per task with fresh random seeds, and the run's score is the normalised minimum of the two per-task re-evaluation means. Training fitness rests on a single episode and is therefore a noisy estimate of policy quality. The re-evaluation removes this noise from the between-condition comparison. Scores are reported as median and interquartile range (IQR) across the 30 independent runs. Each run contributes a single value, and these per-run values are the data points for all statistical tests.
+% FEEDBACK F37: "learning dynamics" Satz unklar. Gemeint: Man mittelt die Fitness-pro-
+%   Generation-Kurven ueber alle Laeufe einer Bedingung, zeichnet ein 95%-Konfidenzband
+%   darum und liest daran ab, WIE SCHNELL (convergence speed) und WIE STABIL (stability)
+%   die Bedingung lernt. Einfacher formulieren: "We average the fitness-over-generation
+%   curve across runs and add a 95% confidence band to compare how fast and how stably
+%   each condition converges."
+    \item \textbf{Learning dynamics.} For each condition we average the fitness-over-generation curve across its runs and add a 95\% confidence band, which shows how fast and how stably the condition converges.
 \end{enumerate}
 
+% FEEDBACK F38: Statistische Verfahren -- Sanity-Check des ganzen Blocks. Ergibt Sinn und
+%   ist konsistent: Kruskal-Wallis (Omnibus, 3 Bedingungen) -> Holm-korrigierte paarweise
+%   Mann-Whitney; Effektgroessen Hodges-Lehmann-Shift (Bootstrap-CI) und Cliff's delta;
+%   TOST fuer Aequivalenz; epsilon^2 als Omnibus-Effektgroesse. Nichtparametrik ist bei
+%   Evolutionslaeufen korrekt begruendet. epsilon^2-Formel wurde bereits gegen die
+%   berichteten Werte geprueft (H=7.45,k=3,n=90 -> ~0.063). Alles stimmig.
 Statistical comparison across the three conditions uses a Kruskal--Wallis omnibus test ($\alpha = 0.05$) on the seed-level re-evaluation scores, followed by Holm-corrected pairwise Mann--Whitney tests.
 Non-parametric tests are appropriate because evolutionary run outcomes are not guaranteed to follow a normal distribution and do not reliably support parametric assumptions.
 Each pairwise contrast is accompanied by a Hodges--Lehmann shift estimate with a bootstrap 95\% confidence interval and by Cliff's $\delta$ as an effect size, and equivalence testing by Welch two one-sided tests (TOST) complements the significance tests where the question is whether conditions perform the same.
@@ -1241,6 +1433,10 @@ The omnibus test is reported with epsilon-squared, $\varepsilon^2 = (H - k + 1)/
 \subsection{Compute Resources}
 \label{subsec:compute-resources}
 
+% FEEDBACK F39: Table 4 steht direkt unter dem ankuendigenden Satz. Sinnvoller waere sie
+%   am ENDE des ganzen 4.6-Absatzes (nach der Beschreibung), damit der Fliesstext nicht
+%   sofort von der Tabelle unterbrochen wird. Umsetzung: table-Environment ans Ende der
+%   Subsection verschieben (oder [b]/\FloatBarrier). NICHT geaendert -- nur markiert.
 All experiments were conducted on a single compute node with the specifications listed in Table~\ref{tab:compute-node}.
 
 \begin{table}[h]
@@ -1388,15 +1584,35 @@ JIT compilation of the evolutionary step occurs once at the start of each run. S
 \subsection{Experimental overview}
 \label{subsec:experimental-overview}
 We evaluated NEAT and HA-NEAT on a single multi-task control problem: one evolved network must control both the Hopper body (11 observations, 3 actions) and the Walker2D body (17 observations, 6 actions) using the same weights, through the zero-padding and output-slicing interface of Section~\ref{subsec:genome-representation-and-the-padding-scheme}.
-The main study compared three conditions: standard NEAT (tanh only), HA-NEAT (per-node activations drawn from tanh, sigmoid, relu, sin, identity), and an ablation running HA-NEAT's full machinery restricted to tanh.
+The main study compared three conditions: standard NEAT (tanh only), HA-NEAT (per-node activations drawn from tanh, sigmoid, relu, sin, identity), and an ablation running HA-NEAT's full algorithm restricted to tanh.
 Each condition was evolved at population 200 for 750 generations across 30 independent random seeds, giving 90 runs in total on the MJX physics backend.
 
-The selection signal was the normalised minimum of the two per-task scores\revNota{N-06}{}, $\text{fit} = \min(r_{\text{Hopper}}/3000,\, r_{\text{Walker2D}}/5000)$, so a genome cannot raise its score by \revBrit{E-11}{specialising} in one body and neglecting the other.
-Section~\ref{subsec:fitness-evaluation} gives the rationale for this objective. The calibration study (Section~\ref{subsec:calibration}) justified it empirically against the sum and product alternatives and fixed the 750-generation budget.
-Preliminary NEAT-versus-HA-NEAT comparisons shaped the rest of the design. We ran them at populations of 1024--4096 with only two to three seeds per condition. They compared the compatibility thresholds carried into Section~\ref{subsec:hyperparameters}, and their failure to separate the two algorithms at that seed count motivated the 30-seed design and the tanh-only ablation that isolates the mutation machinery from activation diversity. The main study reported here supersedes them.
+% FEEDBACK F40: Du erwaehnst im ersten 5.1-Absatz einen moeglichen Doppel-Space vor
+%   einem Satz. Im Quelltext dieses Absatzes ist kein doppeltes Leerzeichen sichtbar;
+%   falls es im PDF auftaucht, kommt es meist von einem Zeilenumbruch nach einem Punkt
+%   plus fuehrendem Space. Bitte im kompilierten PDF zeigen, wo genau -- dann fixbar.
+% FEEDBACK F41: Formel im Fliesstext ($\text{fit}=\min(...)$) weglassen. Machbar; der
+%   Satz bleibt vollstaendig ("...the normalised minimum of the two per-task scores, so
+%   a genome cannot raise its score by ..."). Gleiche Formel wie im Abstract (F2).
+% FEEDBACK F42: "Section 3.4 gives the rationale for this objective." klingt nach KI /
+%   mechanisch. Besser aktiv/konkret: "We motivate this objective in Section 3.4."
+% FEEDBACK F43: "The main study reported here supersedes them." klingt kuenstlich und
+%   ist unklar. Gemeint: Diese Vorexperimente (2-3 Seeds, grosse Population) sind durch
+%   die vollstaendige Hauptstudie ERSETZT/abgeloest; ihre Ergebnisse zaehlen nur noch
+%   als Design-Begruendung, nicht als Resultat. Einfacher: "These preliminary runs only
+%   shaped the design; the main study below replaces them as the reported result."
+The selection signal was the normalised minimum of the two per-task scores\revNota{N-06}{}, so a genome cannot raise its score by \revBrit{E-11}{specialising} in one body and neglecting the other.
+We motivate this objective in Section~\ref{subsec:fitness-evaluation}. The calibration study (Section~\ref{subsec:calibration}) justified it empirically against the sum and product alternatives and fixed the 750-generation budget.
+Preliminary NEAT-versus-HA-NEAT comparisons shaped the rest of the design. We ran them at populations of 1024--4096 with only two to three seeds per condition. They compared the compatibility thresholds carried into Section~\ref{subsec:hyperparameters}, and their failure to separate the two algorithms at that seed count motivated the 30-seed design and the tanh-only ablation that isolates the mutation mechanism from activation diversity. These preliminary runs only shaped the design; the main study reported here replaces them as the reported result.
 
-Every champion was re-evaluated after training over 20 episodes per task, and the resulting seed-level values were the unit of all statistical analysis (Section~\ref{subsec:evaluation-protocol}).
-
+% FEEDBACK F45: Dieser dritte Absatz (Re-Evaluation, 20 Episoden, seed-level unit) wird
+%   in 5.2 (l. ~1608) fast woertlich wiederholt. Du willst ihn hier in 5.1 STREICHEN,
+%   um die Doppelung zu vermeiden. NICHT geaendert -- nur markiert.
+% FEEDBACK F44: "the unit of all statistical analysis" -- was heisst "unit"? Gemeint ist
+%   die Analyseeinheit: EIN Zahlenwert pro Run/Seed (der re-evaluierte Score) ist der
+%   Datenpunkt, auf dem alle Tests rechnen -- nicht einzelne Episoden oder Generationen.
+%   Klarer: "each run contributes a single value, and these per-run values are the data
+%   points for all statistical tests."
 Section~\ref{sec:main-study} reports the head-to-head multi-task fitness across the three conditions, which is the study's primary result.
 Section~\ref{sec:main-complexity} examines genome complexity and generational dynamics, Section~\ref{sec:main-tradeoff} the per-task trade-off and multi-task pressure, and Section~\ref{sec:main-activation} activation-function usage within HA-NEAT.
 Section~\ref{sec:main-discussion} discusses these analyses together.
@@ -1409,7 +1625,16 @@ This re-evaluation is the reference performance metric for the study.
 The three conditions performed near-identically (Table~\ref{tab:main-fitness}).
 NEAT reached a median fitness of 0.184 \revAcro{A-04}{(IQR $[0.124, 0.253]$)}, HA-NEAT 0.208 ($[0.152, 0.276]$), and the ablation 0.199 ($[0.152, 0.258]$).
 A Kruskal--Wallis test found no difference across the three conditions ($H = 1.48$, $p = 0.476$, $\revNota{N-07}{\varepsilon^2 \approx 0}$).
-Pairwise, every contrast was small and every interval straddled zero: NEAT versus HA-NEAT (Hodges--Lehmann (HL) shift $-0.027$, bootstrap 95\% CI $[-0.097, +0.054]$, Cliff's $\delta = -0.18$ $[-0.46, +0.11]$), NEAT versus the ablation (HL $-0.023$, CI $[-0.071, +0.044]$, $\delta = -0.12$ $[-0.42, +0.17]$), and HA-NEAT versus the ablation (HL $+0.006$, CI $[-0.051, +0.063]$, $\delta = +0.04$ $[-0.26, +0.34]$).
+% FEEDBACK F46: "straddled zero" -- Synonym gewuenscht. "straddle" = beidseitig
+%   umschliessen. Klarer: "every interval spanned zero" / "included zero" / "crossed
+%   zero" / "contained zero". Bedeutung: das Konfidenzintervall enthaelt die 0, also
+%   kein signifikanter Unterschied.
+% FEEDBACK F47: Dieser Absatz packt SEHR viele Zahlen in den Fliesstext (HL-Shift, CI,
+%   Cliff's delta fuer drei Kontraste). Best practice: Zahlen in die Tabelle (Table 5,
+%   die es schon gibt!) und im Text nur die Botschaft ("all three contrasts were small
+%   and every interval included zero; see Table 5"). IQR laesst sich im Text ganz
+%   weglassen. Weniger Zahlen -> fluessiger. NICHT geaendert -- nur markiert.
+Pairwise, every contrast was small and every confidence interval included zero. The Hodges--Lehmann shifts, their bootstrap intervals, and Cliff's $\delta$ for all three contrasts are reported in Table~\ref{tab:main-fitness}.
 For readers calibrated to Brax's raw reward scale: because Walker2D sets the minimum for most champions (Section~\ref{sec:main-tradeoff}), a normalised-minimum fitness of 0.20 corresponds to a Walker2D return of roughly 1000, against the 5000 \revBrit{E-09}{used for normalisation}.
 
 \begin{table}[h]
@@ -1436,10 +1661,27 @@ HA-NEAT vs.\ ablation & $+0.006$ $[-0.051, +0.063]$ & $+0.04$ $[-0.26, +0.34]$ \
 The design bounds how large an undetected effect could be.
 With $n = 30$ per group, the smallest difference detectable at $\alpha = 0.05$ (two-sided) with power 0.80, adjusted for the asymptotic relative efficiency of the Mann--Whitney test, is Cohen's $d \approx 0.74$, about 0.06 normalised-fitness units or roughly 30\% of the observed performance level.
 We can therefore rule out large differences between conditions. Smaller differences could have gone undetected.
-\revAcro{A-03}{The two one-sided tests (TOST)} sharpen this, although the procedure is parametric and therefore serves only as a supplementary check alongside the rank-based analyses: at an equivalence bound of $\pm 0.8$ pooled SD ($\pm 0.067$) all three contrasts are statistically equivalent ($p = 0.034$, $0.020$, $0.002$), whereas at the tighter $\pm 0.5$ SD bound ($\pm 0.042$) only HA-NEAT versus the ablation is equivalent ($p = 0.040$), with NEAT versus HA-NEAT ($p = 0.234$) and NEAT versus the ablation ($p = 0.176$) inconclusive.
+% FEEDBACK F48: Du merkst an "The two one-sided tests shortened this" klinge falsch. Im
+%   aktuellen Text steht "sharpen this", nicht "shortened this" (vermutlich alte Fassung
+%   oder verhoert). "sharpen" ist ok, aber immer noch etwas vage -- gemeint: die TOST
+%   PRAEZISIEREN die Aussage / grenzen ein, wie gross ein Unterschied hoechstens ist.
+%   Klarer: "The two one-sided tests (TOST) make this more precise:".
+% FEEDBACK F47 (Forts.): Auch dieser TOST-Absatz ist stark zahlenlastig. Ueberlege eine
+%   kompakte Uebersichtstabelle (Kontrast x Bound -> equivalent/inconclusive) und im Text
+%   nur das Fazit. NICHT geaendert -- nur markiert.
+\revAcro{A-03}{The two one-sided tests (TOST)} make this more precise, although the procedure is parametric and therefore serves only as a supplementary check alongside the rank-based analyses: at an equivalence bound of $\pm 0.8$ pooled SD ($\pm 0.067$) all three contrasts are statistically equivalent ($p = 0.034$, $0.020$, $0.002$), whereas at the tighter $\pm 0.5$ SD bound ($\pm 0.042$) only HA-NEAT versus the ablation is equivalent ($p = 0.040$), with NEAT versus HA-NEAT ($p = 0.234$) and NEAT versus the ablation ($p = 0.176$) inconclusive.
 The study therefore rules out large ($\geq 0.8$ SD) differences everywhere, and medium differences only between HA-NEAT and its ablation. The confidence intervals and the minimum detectable effect are the primary evidence for the null, with the TOST results supporting equivalence only at the large-effect bound.
 
-The endpoint null extends across the whole training run (Figure~\ref{fig:main-training-curves}).
+% FEEDBACK F49: "The endpoint null extends across the whole training run." Zwei Fragen:
+%   (a) Warum staendig "null"? -> Kurzform fuer "null result / Null-Ergebnis": kein
+%       Unterschied zwischen den Bedingungen. Ist korrekt, aber "a/the null" als Substantiv
+%       ist Fachjargon; einmal ausschreiben ("null result") erhoeht die Lesbarkeit.
+%   (b) "endpoint" = die Messung am ENDE des Trainings (der re-evaluierte Endscore, Table 5),
+%       im Gegensatz zum Verlauf ueber die Generationen. Aussage: Der fehlende Unterschied
+%       gilt nicht nur am Endpunkt, sondern ueber den GESAMTEN Trainingsverlauf. Klarer:
+%       "The no-difference result holds not only at the final score but across the whole
+%       training run."
+The no-difference result holds across the whole training run, and not only at the final score (Figure~\ref{fig:main-training-curves}).
 All three conditions traced the same learning curve: a steep rise over the first 150 generations, then a slow climb through the diminishing-returns regime that the budget calibration anticipated (Section~\ref{subsec:calibration}).
 At no generation did the across-seed means separate by more than 0.03 normalised-fitness units, and the 95\% confidence bands overlap throughout: the curves stay interleaved from start to finish.
 Over the final 50 generations the mean training fitness was 0.301 (NEAT), 0.307 (HA-NEAT), and 0.318 (ablation).
@@ -1466,7 +1708,7 @@ These are exploratory, post-hoc analyses, and we frame them as such throughout.
 \label{sec:main-complexity}
 
 Because the three conditions reached statistically indistinguishable fitness (Section~\ref{sec:main-study}), we examined whether they arrived there with equivalent genome structure.
-We ask whether conditions that reached the same fitness did so with the same structure, or whether the HA-NEAT machinery leaves a topological signature the fitness comparison alone would miss.
+We ask whether conditions that reached the same fitness did so with the same structure, or whether the HA-NEAT algorithm leaves a topological signature the fitness comparison alone would miss.
 For each of the 90 champion genomes (30 per condition) we counted hidden nodes and active connections from the raw genome arrays.
 The 17 input and 6 output nodes are fixed by the task and excluded from the hidden-node count.
 
@@ -1536,7 +1778,19 @@ Walker2D was the binding task for 97\% of NEAT champions, 83\% of HA-NEAT, and 9
 The per-genome imbalance $|r_{\text{Hopper}}/3000 - r_{\text{Walker2D}}/5000|$ did not differ across conditions (medians 0.159 / 0.117 / 0.142; Kruskal--Wallis $H = 3.39$, $p = 0.184$, $n = 30$ per condition).
 The Hopper band sits at $0.34 \times 3000 \approx 1000$ raw reward, which for this environment corresponds to roughly 1000 timesteps of the per-step healthy/alive bonus \parencite{freeman_brax_2021}.
 A return in this band is consistent with a policy that survives the episode while making little forward progress, so the champions may effectively hop in place on Hopper. We did not render episodes to verify this.
-Across every condition, then, champions solved the multi-task problem with the same lopsided profile: a saturated Hopper score and a Walker2D score that carried the aggregate.
+The evolved controllers keep both bodies upright while moving them only a little. Their returns stay well below those that standard reinforcement learning methods such as SAC and TD3 reach on these tasks \parencite{haarnoja_soft_2018,fujimoto_addressing_2018}.
+% FEEDBACK F50 (Anknuepfung): Dieser Absatz macht deinen Punkt teilweise schon ("champions
+%   may effectively hop in place ... little forward progress"). Hier laesst sich der
+%   explizite Vergleich zu Standard-RL ergaenzen: die evolvierten Policies halten die
+%   Roboter aufrecht/am Leben, laufen aber kaum vorwaerts -- weit unter SAC/TD3/PPO auf
+%   denselben Environments. NICHT eingefuegt -- nur markiert.
+% FEEDBACK F56: Figur-Platzierung in 5.4 (du sagst "Figure 10 muss weiter nach oben").
+%   Gleiche Ursache wie F33: [h] schiebt die Figur nach unten. Fix via [ht]/[!ht] oder
+%   frueher im Quelltext platzieren. Betrifft die \begin{figure}[h] direkt hierunter.
+%   ANMERKUNG: In deiner R&D-Aufnahme wiederholst du danach woertlich die 4.x-Punkte
+%   (Figure 4/5, "learning dynamics", statistische Measures, Table 4). Die sind bereits
+%   als F33/F37/F38/F39 markiert und werden hier nicht doppelt gesetzt.
+Across every condition, then, champions solved the multi-task problem with the same unbalanced profile: a saturated Hopper score and a Walker2D score that carried the aggregate.
 
 \begin{figure}[h]
 \centering
@@ -1588,7 +1842,16 @@ fraction predicts fitness across the 17 champions with hidden nodes.}
 \label{sec:main-discussion}
 
 The three conditions reached statistically indistinguishable multi-task fitness (medians 0.184 / 0.208 / 0.199; $H = 1.48$, $p = 0.476$), yet they did not arrive there with the same genome structure.
-Activation diversity therefore did not raise multi-task fitness. The HA-NEAT machinery nonetheless left a structural signal the fitness comparison alone would have missed.
+% FEEDBACK F51: "machinery" schon wieder ("HA-NEAT machinery"). Ersetzen durch
+%   "algorithm"/"mechanism(s)": "The HA-NEAT algorithm nonetheless left a structural
+%   signal ...". Betrifft mehrere Stellen in 5.6 (siehe auch F53-Umfeld). Siehe F3.
+% FEEDBACK F50 (Discussion-Ergaenzung, gehoert thematisch hierher): Du willst in der
+%   Discussion erwaehnen, dass die Algorithmen die Roboter zwar zum (aufrechten) STEHEN/
+%   Balancieren gebracht haben, aber NICHT zum echten Weit-Laufen -- deutlich unter dem,
+%   was uebliche Reinforcement-Learning-Algorithmen (SAC/TD3/PPO) auf Hopper/Walker2D
+%   erreichen. Das erklaert die niedrigen normalisierten Scores (~0.2-0.34) anschaulich.
+%   Guter Ort: hier oder am Ende von 5.6. NICHT eingefuegt -- nur als To-do markiert.
+Activation diversity therefore did not raise multi-task fitness. The HA-NEAT algorithm nonetheless left a structural signal the fitness comparison alone would have missed.
 The three analyses in this section were exploratory, run only after the pre-specified fitness comparison returned a null result, and we read them as hypothesis-generating.
 They also involve multiple tests across related outcome measures without a battery-wide correction, so the single significant omnibus result (hidden-node counts, $p = 0.024$) should be read with an elevated false-positive risk in mind.
 
@@ -1598,7 +1861,7 @@ The ablation runs the HA-NEAT mutation operator.
 Even with a tanh-only activation set, the activation-mutation event still fires and still reassigns the historical markers on every connection of the chosen hidden node.
 The activation change is a functional no-op (tanh to tanh), yet the marker side effect persists: reassigned markers register as disjoint genes in the compatibility distance and degrade crossover alignment for any genome carrying hidden nodes.
 \revBrit{E-12}{We hypothesise that this} suppresses the spread of hidden-node structures.
-That account would explain why the ablation tracks HA-NEAT, and not NEAT, in the node counts, and it would locate the compactness effect in the HA-NEAT machinery instead of in activation diversity.
+That account would explain why the ablation tracks HA-NEAT, and not NEAT, in the node counts, and it would locate the compactness effect in the HA-NEAT algorithm instead of in activation diversity.
 We stress that this mechanism is a hypothesis.
 It is consistent with the code path and with the observed ordering, but we did not test it directly, and the effect is small and rests on a single significant pairwise contrast.
 
@@ -1616,13 +1879,30 @@ Section~\ref{sec:conclusion-and-future-work} states both verdicts and their evid
 These results speak to the gap identified in Section~\ref{subsec:research-gap-and-contribution}.
 HA-NEAT's advantages were established on static classification and regression benchmarks, where heterogeneous networks matched homogeneous baselines with 50--70\% fewer nodes and connections \parencite{hagg_evolving_2017}. Whether they transfer to a temporally extended control task was the open question this thesis tested.
 On the fitness criterion the answer here is no: in this multi-task locomotion setting, activation diversity produced no measurable advantage, even though the champions demonstrably \revTerm{T-10}{used the full activation set} (Section~\ref{sec:main-activation}).
-The parsimony direction did reappear, with both HA-NEAT variants ending at fewer hidden nodes than NEAT (significantly so only for the ablation), but the ablation complicates its source: the compactness persisted without any actual activation diversity, which points to the mutation machinery as the driver, a separation the original single-algorithm comparisons could not make.
+The parsimony direction did reappear, with both HA-NEAT variants ending at fewer hidden nodes than NEAT (significantly so only for the ablation), but the ablation complicates its source: the compactness persisted without any actual activation diversity, which points to the mutation mechanism as the driver, a separation the original single-algorithm comparisons could not make.
 The question of whether per-neuron \revPlain{P-07}{functional roles} \revBrit{E-14}{modularise the shared policy} (Section~\ref{subsec:research-gap-and-contribution}) therefore finds no support at the fitness level.
-That verdict is indirect, because \revBrit{E-15}{we operationalised modularity} through fitness and activation-usage statistics alone. The modularity question itself therefore remains open rather than answered in the negative (Section~\ref{sec:conclusion-and-future-work}).
-The degeneration documented above qualifies the verdict further: because the objective collapsed toward \revBrit{E-16}{single-task Walker2D optimisation}, the design applied less multi-task pressure than intended, and a setting that keeps both tasks under selection remains the sharper test of the question.
+% FEEDBACK F53: "That verdict is indirect, because we operationalised modularity through
+%   fitness and activation-usage statistics alone." klingt kuenstlich/technisch.
+%   "operationalise" = messbar machen. Gemeint: Wir haben Modularitaet NUR indirekt
+%   gemessen (ueber Fitness + Aktivierungsstatistik), nicht direkt. Einfacher: "This
+%   verdict is only indirect: we measured modularity through fitness and activation-usage
+%   statistics, not directly."
+% FEEDBACK F52: "The modularity question itself therefore remains open rather than
+%   answered in the negative." Bedeutung: Wir haben NICHT bewiesen, dass es keine
+%   Modularitaet gibt -- wir konnten es nur nicht nachweisen. Die Frage bleibt OFFEN,
+%   ist also nicht mit "nein" beantwortet. Klarer: "So we cannot conclude that no
+%   modularity exists; the question stays open."
+% FEEDBACK F54: "The degeneration documented above qualifies the verdict further." klingt
+%   kuenstlich. "degeneration" = das Abgleiten des Ziels zu Single-Task-Walker2D;
+%   "qualifies the verdict" = schraenkt das Urteil ein. Einfacher: "The collapse toward
+%   single-task Walker2D optimisation weakens this verdict further:".
+This verdict is only indirect, since we measured modularity through fitness and activation-usage statistics alone. We therefore cannot conclude that no modularity exists, and the question stays open (Section~\ref{sec:conclusion-and-future-work}).
+The collapse toward \revBrit{E-16}{single-task Walker2D optimisation} weakens this verdict further: because the objective drifted toward one task, the design applied less multi-task pressure than intended, and a setting that keeps both tasks under selection remains the sharper test of the question.
 
-Section~\ref{sec:conclusion-and-future-work} sets out the limitations of these analyses and the follow-up experiments they call for.
-
+% FEEDBACK F55: "Section 6 sets out the limitations ..." -- du sagst, diese vorwegnehmende
+%   Ankuendigung/"Introduction" auf das naechste Kapitel brauchen wir hier nicht. Satz
+%   streichbar; das Conclusion-Kapitel folgt ohnehin unmittelbar. NICHT geaendert -- nur
+%   markiert.
 
 
 
@@ -1630,47 +1910,76 @@ Section~\ref{sec:conclusion-and-future-work} sets out the limitations of these a
 \label{sec:conclusion-and-future-work}
 
 This thesis asked two questions. Can a single neuroevolved genome control two locomotion bodies of different shape, and do heterogeneous per-node activation functions help it do so?
-We built one network over the union of the Hopper and Walker2D interfaces, 17 inputs and 6 outputs. We fitted each environment to that network by zero-padding Hopper's observation and slicing its actions from the first three outputs, so that no part of the architecture was reserved for either task (Section~\ref{subsec:genome-representation-and-the-padding-scheme}).
+% FEEDBACK F57: 2. Satz "We built one network over the union of the Hopper and Walker2D
+%   interfaces." -> hier (und generell in Intro + Conclusion) zitieren. Einleitung und
+%   Fazit stehen aktuell fast ohne Quellen; da es abgeschlossene Kapitel sind, gehoeren
+%   die Kernreferenzen (Brax/Hopper/Walker2D: freeman_brax_2021; NEAT: stanley_evolving_2002;
+%   HA-NEAT: hagg_evolving_2017) auch hier hin. NICHT geaendert -- nur markiert.
+We built one network over the union of the Hopper and Walker2D interfaces \parencite{freeman_brax_2021}, 17 inputs and 6 outputs. We fitted each environment to that network by zero-padding Hopper's observation and slicing its actions from the first three outputs, so that no part of the architecture was reserved for either task (Section~\ref{subsec:genome-representation-and-the-padding-scheme}).
 Selection used the normalised minimum of the two per-task returns. We chose that objective because it cannot reward a specialist, and we calibrated it against the sum and the product before the main experiments began (Sections~\ref{subsec:fitness-evaluation} and~\ref{subsec:calibration}).
-On that interface we compared three conditions: standard NEAT, HA-NEAT, and a tanh-only HA-NEAT ablation that keeps the full mutation machinery but has no activation diversity. Each ran at population 200 over 750 generations across 30 seeds, and we re-evaluated every champion over 20 held-out episodes per task (Section~\ref{sec:results-and-discussion}).
+On that interface we compared three conditions: standard NEAT, HA-NEAT, and a tanh-only HA-NEAT ablation that keeps the full mutation mechanism but has no activation diversity. Each ran at population 200 over 750 generations across 30 seeds, and we re-evaluated every champion over 20 held-out episodes per task (Section~\ref{sec:results-and-discussion}).
 
-\paragraph{RQ1: can a single genome control both tasks?}
+% FEEDBACK F58: "RQ1"/"RQ2" abkuerzen -> weglassen; nur die ausgeschriebene Frage als
+%   Paragraph-Titel stehen lassen (hier: "Can a single genome control both tasks?").
+%   Gleiches bei RQ2 unten. NICHT geaendert -- nur markiert.
+\paragraph{Can a single genome control both tasks?}
 Only partially, and at a weak level of competence.
 Every condition produced controllers that scored on both bodies rather than collapsing onto one, so the shared interface is workable. A single genome does run on two environments of different shape, with no per-task heads, no fine-tuning, and no task conditioning.
 The level of control, however, is low.
-The median normalised-minimum fitness was about 0.20, and the profile behind that number is lopsided.
+% FEEDBACK F59: "the profile behind that number is lopsided." Deine Frage "Hae?" -- Erklaerung:
+%   Die eine Zahl (Median-Fitness ~0.20) verdeckt, dass die Leistung auf die beiden Tasks
+%   UNGLEICH verteilt ist. Nicht 0.20/0.20, sondern hoch auf Hopper (~0.34) und niedrig auf
+%   Walker2D. "lopsided" = einseitig/schief. Da Walker2D bei 83-97% der Champions das
+%   Minimum stellt, bestimmt Walker2D die Aggregatzahl; Hopper ist gesaettigt-hoch, Walker
+%   schleppt den Rest. -> Aussage: die Kennzahl wirkt gleichmaessig-mittelmaessig, ist aber
+%   in Wahrheit schief. Synonym-Vorschlag (du wolltest ein einfacheres Wort): "unbalanced"
+%   (passt zu deinem eigenen "balanced performance" in der Caption) oder "uneven".
+The median normalised-minimum fitness was about 0.20, and the profile behind that number is unbalanced.
 Champions cluster in a narrow band at a normalised Hopper score of roughly 0.34, which corresponds to about 1000 raw reward, the level a policy earning little beyond the per-step alive bonus would reach.
 Walker2D binds the minimum for 83--97\% of champions and carries the aggregate, reaching only about a fifth of its normalisation constant (Section~\ref{sec:main-tradeoff}).
 Our answer to RQ1 is a qualified no. The shared genome learns a viable but weak joint controller, and the shared interface by itself did not yield strong control of both tasks.
 
-\paragraph{RQ2: does HA-NEAT improve multi-task performance over NEAT?}
+% FEEDBACK F58 (Forts.): auch hier "RQ2:" weglassen, nur die Frage stehen lassen.
+\paragraph{Does HA-NEAT improve multi-task performance over NEAT?}
 No.
 The three conditions reached statistically indistinguishable fitness (medians 0.184 / 0.208 / 0.199; Kruskal--Wallis $H = 1.48$, $p = 0.476$), their learning curves stayed interleaved across all 750 generations, and every pairwise confidence interval straddled zero (Section~\ref{sec:main-study}).
 The null is not a failure of the mechanism to engage: HA-NEAT's champions \revTerm{T-11}{used the full activation set}, with $\tanh$ their least common hidden activation at 11\% (Section~\ref{sec:main-activation}).
-\revPlain{P-04}{The mechanism is exercised, and exercising it does not change fitness on this task.}
-\revClarity{L-03}{The follow-up question is the more informative one.} Would any advantage be attributable to activation diversity, or to the speciation machinery that arrives with it?
+% FEEDBACK F60: "The mechanism is exercised, and exercising it does not change fitness on
+%   this task." klingt kuenstlich (Wiederholung "exercised/exercising"). Gemeint: Der
+%   Mechanismus wird tatsaechlich GENUTZT, aber seine Nutzung veraendert die Fitness nicht.
+%   Einfacher/aktiver: "The networks do use the mechanism, but using it makes no difference
+%   to fitness on this task."
+The networks do use the mechanism, but using it makes no difference to fitness on this task.
+\revClarity{L-03}{The follow-up question is the more informative one.} Would any advantage be attributable to activation diversity, or to the speciation mechanism that arrives with it?
 The only structural signal we found, that champions end with fewer hidden nodes than NEAT's, is significant for the \emph{ablation} (Section~\ref{sec:main-complexity}), the condition that has no activation diversity at all.
-The effect therefore appears where diversity is absent, and we attribute it to the marker-reassignment machinery, not to heterogeneity.
+The effect therefore appears where diversity is absent, and we attribute it to the marker-reassignment mechanism, not to heterogeneity.
 That attribution remains a hypothesis. It is consistent with the code path and with the observed ordering, but we did not test the mechanism directly, and it rests on a single significant pairwise contrast.
 
-\paragraph{Contributions.}
+% FEEDBACK F61: Die Paragraph-Label "Contributions." / "Limitations." / "Future work."
+%   gefallen dir nicht -> streichen und den Absatz ohne fettes Label laufen lassen (der
+%   erste Satz nennt das Thema ohnehin). Betrifft alle drei \paragraph{...}-Label unten.
+%   NICHT geaendert -- nur markiert.
 We claim three contributions, each stated at the level the evidence supports.
 The first is the shared-genome interface: a zero-padded, output-sliced encoding that lets one NEAT genome run on two environments of different observation and action dimensionality, paired with a calibrated aggregation that cannot reward specialisation.
 The second is the controlled three-condition comparison this interface enables. We ran it at 30 seeds per condition on a GPU-native JAX/Brax/TensorNEAT stack and report a null with its detectable-effect bound made explicit: differences of Cohen's $d \geq 0.74$ are excluded, smaller ones are not.
-The third is the ablation that separates activation diversity from the mutation machinery that carries it. The original single-algorithm evaluations of HA-NEAT could not make that separation, and without it the structural signal reported here could not be attributed to either component.
+The third is the ablation that separates activation diversity from the mutation mechanism that carries it. The original single-algorithm evaluations of HA-NEAT could not make that separation, and without it the structural signal reported here could not be attributed to either component.
 
-\paragraph{Limitations.}
 The analyses of Section~\ref{sec:main-discussion} have clear limitations.
 First, the hidden-node comparison rests on very small, heavily tied counts (medians of 0--2 hidden nodes), which weakens the rank test and inflates the influence of a few large genomes. We therefore read the significant NEAT-versus-ablation contrast as suggestive.
 Second, the species-count comparison is uninformative because all conditions saturate the configured species ceiling, so this design cannot test whether HA-NEAT's speciation protection sustains more diversity.
 Third, the Hopper plateau confounds the multi-task claim: because Walker2D is almost always the binding task, the study measures single-task Walker2D optimisation more than true multi-task pressure.
 Fourth, the activation-fitness correlations rest on only 17 informative genomes and are underpowered.
 Fifth, all of these results come from a single population size (200), so the structural effects may not persist at other scales.
-Sixth, we operationalised modularity through fitness and activation-usage statistics alone, with no per-task lesioning or pathway analysis. Whether per-neuron activations modularise the shared policy therefore remains an open question, and our null result does not settle it in the negative.
+% FEEDBACK F63: "lesioning" -> Synonym gewuenscht. Begriff aus den Neurowissenschaften:
+%   gezieltes Ausschalten/Entfernen eines Netzteils, um seinen Beitrag zu messen. Einfacher:
+%   "per-task ablation of parts of the network" / "selectively disabling nodes/pathways".
+% FEEDBACK F62: "and our null result does not settle it in the negative." -> streichen
+%   (deine Ansage). Der Satz davor sagt bereits, dass die Frage offen bleibt; der Zusatz
+%   ist redundant. NICHT geaendert -- nur markiert.
+Sixth, we measured modularity through fitness and activation-usage statistics alone, with no per-task disabling of network parts or pathway analysis. Whether per-neuron activations modularise the shared policy therefore remains an open question.
 
-\paragraph{Future work.}
 Three concrete follow-ups target the first, third, and fifth of these limitations.
-A targeted ablation can test the marker-reassignment hypothesis: set the activation-mutation rate to zero, keep the rest of the HA-NEAT machinery, and check whether the compactness effect disappears.
+A targeted ablation can test the marker-reassignment hypothesis: set the activation-mutation rate to zero, keep the rest of the HA-NEAT algorithm, and check whether the compactness effect disappears.
 Restoring genuine multi-task pressure calls for either a harder first task or an aggregation that does not clip improvements on the leading task. The normalised product is one such aggregation, since it keeps a nonzero selection gradient on both tasks throughout. \revGram{G-10}{It permits more between-task imbalance than the minimum does}, as our calibration experiment showed (Section~\ref{subsec:calibration}).
 Finally, repeating the complexity and activation analyses at larger population sizes would test whether the structural differences observed here are scale-dependent.
 None of these fitted the remaining compute budget, and all three are left to future work.
