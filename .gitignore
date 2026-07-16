@@ -166,8 +166,11 @@ mlflow.db-wal
 
 # other stuff
 thesis_review_todo.md
-title_candidates.md
 master_thesis.bib
 additional_pap.bib
 review.md
 thesis_section_playbook_and_critique.md
+
+# downloaded reference PDFs (copyrighted, repo is public) + latex save-error artifacts
+thesis/cited_pdfs/
+*.bcf-SAVE-ERROR
