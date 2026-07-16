@@ -121,6 +121,8 @@ REFERENCE.md                 # Detailed implementation notes
 
 `thesis/nova/` holds the thesis wrapped in the **official NOVA-IMS 2025 template** (memoir-based `novathesis` class), configured for the MDSAA / Data Science programme. It is the submission-formatted build; `thesis/main.tex` remains the canonical working text.
 
+**Final PDF (current):** compile `thesis/nova/template.tex` (see the Build command below). It is the newest, submission-formatted source and supersedes `thesis/main.tex` for producing the final PDF. The actual thesis body it pulls in lives in `thesis/nova/Chapters/thesis-body.tex`; edit content there, not in `template.tex`.
+
 - **Entry point:** `thesis/nova/template.tex` — do NOT edit. All customisation lives in `Config/*.tex`.
 - **Our content (the only committed files under `nova/`):**
   - `Config/1_novathesis.tex` — doctype=msc, school=nova/ims, mdsaa/ds, `docstatus=working`, English-only abstract.
