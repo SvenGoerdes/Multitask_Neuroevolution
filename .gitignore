@@ -130,7 +130,6 @@ examples/func_fit/evolving_state.pkl
 src/evox/*
 .ai/
 experiment/
-pyproject.toml
 
 # genome folder
 results/
