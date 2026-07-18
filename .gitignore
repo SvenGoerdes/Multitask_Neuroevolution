@@ -113,18 +113,14 @@ cython_debug/
 
 # Markdown files
 answers.md
-methodology_and_experiments.md 
 questiosnt_meth.md
 
 
 # Other
-*.log
 *.pot
 *.mo
 *.mp4
 
-tutorials/.ipynb_checkpoints/*
-docs/_build/*
 examples/func_fit/evolving_state.pkl
 
 src/evox/*
@@ -137,8 +133,10 @@ results/
 # Claude local settings (machine-specific; skills + principles are tracked)
 .claude/settings.local.json
 
-# MLflow — too large for GitHub (>100MB), sync via rsync from server
+# MLflow — too large for GitHub (>100MB), kept locally only
 mlflow.db
+mlflow.db-shm
+mlflow.db-wal
 mlruns/
 .gstack/
 
@@ -149,17 +147,15 @@ analysis/outputs/reduced_*/
 analysis/outputs/multi_task_neat_vs_haneat_ablation_*/
 analysis/outputs/multi_task_neat_vs_haneat_final_*/
 
-# One-off run configs
-config_haneat_reduced_seed871.yaml
+# Rendered rollout videos (kept locally, never uploaded — regenerable via eval/visualize_folder.py)
+videos/
+task_runs/
 
 # Wiki system (root-level knowledge base only, not .claude/skills/wiki)
 /wiki/
 
 # macOS
 .DS_Store
-mlflow.db
-mlflow.db-shm
-mlflow.db-wal
 
 
 
