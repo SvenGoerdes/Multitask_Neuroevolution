@@ -130,7 +130,7 @@ REFERENCE.md                 # Detailed implementation notes
   - `Config/3_cover.tex` — cover metadata. **Contains TODO placeholders** for adviser, previous degree, submission/exam date, committee.
   - `Config/4_files.tex` — wires in `Chapters/thesis-body.tex` + both `.bib` files.
   - `Config/5_packages.tex` — thesis packages (tikz-cd, multicol, placeins, subcaption); `\fb`/`\rev*` review macros neutralised to plain text.
-  - `Chapters/thesis-body.tex` — **the whole thesis body**, migrated from `main_feedback_sven.tex`. Prose byte-identical; headings promoted one level (`\section`→`\chapter`, etc.).
+  - `Chapters/thesis-body.tex` — **the whole thesis body and the canonical, most-current version of the thesis text.** Originally migrated from the (now-deleted) `main_feedback_sven.tex` review variant, with headings promoted one level (`\section`→`\chapter`, etc.); it has since been edited forward independently (e.g. a TikZ placeholder replaced with a real figure, captions shortened, new citations added), so it is no longer byte-identical to any `main*.tex` file. Edit thesis prose here, not in `thesis/main.tex`.
   - `Chapters/abstract-en.tex` — English abstract + keywords.
 - **Not committed (gitignored via `nova/.gitignore`):** the 47 MB vendored template core (`novathesis.cls`, cover PDFs, fonts, `NOVAthesisFiles/`, template `Chapters/`/`Bibliography/`) and all build artifacts. Restore the core by re-copying from `../nova-ims-thesis-template-2025-main` (kept outside the repo, untouched).
 - **Figures:** `nova/Figures` is a symlink to `../Figures`; body references `Figures/*.png` resolve via `\graphicspath`.
